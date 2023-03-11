@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Vladimir Khil</Authors>
+    <Company>Khil-soft</Company>
+    <Copyright>Copyright © Khil-soft 2023</Copyright>
+    <PackageProjectUrl>https://github.com/VladimirKhil/SIContentService</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/VladimirKhil/SIContentService</RepositoryUrl>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)\obj\$(Platform).$(Configuration)\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)\bin\$(Platform).$(Configuration)\$(MSBuildProjectName)</OutputPath>
+  </PropertyGroup>
+</Project>

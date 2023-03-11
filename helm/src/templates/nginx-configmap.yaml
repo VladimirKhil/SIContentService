@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sicontent.fullname" . }}-nginx-configmap
+  labels:
+    {{- include "sicontent.labels" . | nindent 4 }}
+data:
+  nginx.conf: |-
+    worker_processes 16; # updated (auto)
+    worker_rlimit_nofile 131072; # added
+
+    error_log  /var/log/nginx/error.log error; # updated (notice)
+    pid        /var/run/nginx.pid;
+
+    events {
+        use epoll;
+        worker_connections  8192;
+        multi_accept on;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log off; # updated
+        add_header    X-Frame-Options SAMEORIGIN;
+
+        sendfile           on;
+        tcp_nopush         on;
+        tcp_nodelay        on; # updated
+        proxy_max_temp_file_size 0; # added
+        keepalive_timeout  65;
+        types_hash_max_size 2048;
+        reset_timedout_connection on;
+        client_header_timeout 12s; # added
+        client_body_timeout 12s; # added
+        server_tokens off;
+
+        open_file_cache max=200000 inactive=20s; # added
+        open_file_cache_valid 30s; # added
+        open_file_cache_min_uses 2; # added
+        open_file_cache_errors on; # added
+
+        include /etc/nginx/conf.d/*.conf;
+    }

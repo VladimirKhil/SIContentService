@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: vladimirkhil/sicontentservice
+  pullPolicy: IfNotPresent
+  tag: "1.0.1"
+  nginxTag: "alpine"
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+service:
+  type: ClusterIP
+  port: 5000
+  targetPort: 5000
+  nginxPort: 80
+  nginxTargetPort: 80
+
+ingress:
+  enabled: true
+  clientSecret: ''
+  hosts: []
+  tls: []
+
+resources: {}
+nginxResources: {}
+
+volumePath: ''
+logPath: ''
+nginxLogPath: ''
+
+maxUploadSize: '101m'
+
+options:
+  maxPackageSizeMb: 100
+  maxAvatarizeMb: 1
+  minDriveFreeSpaceMb: 7000
+  minDriveCriticalSpaceMb: 2000
+  maxPackageLifetime: '03:00:00'
+  maxAvatarLifetime: '04:00:00'
+  cleaningInterval: '00:30:00'

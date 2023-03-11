@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sicontent
+description: A service for uploading and retrieving SIGame content
+type: application
+version: 1.0.0
+appVersion: 1.0.0

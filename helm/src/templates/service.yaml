@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sicontent.fullname" . }}
+  labels:
+    {{- include "sicontent.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+    - port: {{ .Values.service.nginxPort }}
+      targetPort: {{ .Values.service.nginxTargetPort }}
+      protocol: TCP
+      name: httpnginx
+  selector:
+    {{- include "sicontent.selectorLabels" . | nindent 4 }}

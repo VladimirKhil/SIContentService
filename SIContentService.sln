@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D0A624CF-FE09-4BC9-BBBA-2290B063DCED}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DBE030DD-3DE7-4D08-9496-6ABD9ED9B6C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{110906B2-8D01-4B83-9A9A-2BDEF2C5D7CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIContentService", "src\SIContentService\SIContentService.csproj", "{199EEBEF-32E1-42C4-878E-C3446A6D7421}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIContentService.Contract", "src\SIContentService.Contract\SIContentService.Contract.csproj", "{10591F1F-8274-4354-80A0-D01D2D574B3E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIContentService.Client", "src\SIContentService.Client\SIContentService.Client.csproj", "{FC31A6E5-A2A8-45D1-AEF9-39FA17BD18A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIContentService.IntegrationTests", "test\SIContentService.IntegrationTests\SIContentService.IntegrationTests.csproj", "{1A54803C-BACF-488A-9130-AFC4535E2D21}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{199EEBEF-32E1-42C4-878E-C3446A6D7421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{199EEBEF-32E1-42C4-878E-C3446A6D7421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{199EEBEF-32E1-42C4-878E-C3446A6D7421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{199EEBEF-32E1-42C4-878E-C3446A6D7421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10591F1F-8274-4354-80A0-D01D2D574B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10591F1F-8274-4354-80A0-D01D2D574B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10591F1F-8274-4354-80A0-D01D2D574B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10591F1F-8274-4354-80A0-D01D2D574B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC31A6E5-A2A8-45D1-AEF9-39FA17BD18A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC31A6E5-A2A8-45D1-AEF9-39FA17BD18A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC31A6E5-A2A8-45D1-AEF9-39FA17BD18A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC31A6E5-A2A8-45D1-AEF9-39FA17BD18A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A54803C-BACF-488A-9130-AFC4535E2D21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A54803C-BACF-488A-9130-AFC4535E2D21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A54803C-BACF-488A-9130-AFC4535E2D21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A54803C-BACF-488A-9130-AFC4535E2D21}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{199EEBEF-32E1-42C4-878E-C3446A6D7421} = {DBE030DD-3DE7-4D08-9496-6ABD9ED9B6C3}
+		{10591F1F-8274-4354-80A0-D01D2D574B3E} = {DBE030DD-3DE7-4D08-9496-6ABD9ED9B6C3}
+		{FC31A6E5-A2A8-45D1-AEF9-39FA17BD18A7} = {DBE030DD-3DE7-4D08-9496-6ABD9ED9B6C3}
+		{1A54803C-BACF-488A-9130-AFC4535E2D21} = {110906B2-8D01-4B83-9A9A-2BDEF2C5D7CE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10EF15E1-CA33-47CA-A68C-2DAE2CE2898A}
+	EndGlobalSection
+EndGlobal

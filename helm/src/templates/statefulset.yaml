@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "sicontent.fullname" . }}
+  labels:
+    {{- include "sicontent.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "sicontent.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "sicontent.fullname" . }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "sicontent.selectorLabels" . | nindent 8 }}
+    spec:
+      volumes:
+        - name: shared-data
+          {{- if .Values.volumePath }}
+          hostPath:
+            path: '{{- toYaml .Values.volumePath }}'
+            type: Directory
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: log
+          {{- if .Values.logPath }}
+          hostPath:
+            path: '{{- toYaml .Values.logPath }}'
+            type: Directory
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: nginx-log
+          {{- if .Values.nginxLogPath }}
+          hostPath:
+            path: '{{- toYaml .Values.nginxLogPath }}'
+            type: Directory
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+        - name: nginx-configmap
+          configMap:
+            name: {{ include "sicontent.fullname" . }}-nginx-configmap
+            defaultMode: 0664
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SIContentService__ContentFolder
+              value: '/opt'
+            - name: SIContentService__MaxPackageSizeMb
+              value: '{{ .Values.options.maxPackageSizeMb }}'
+            - name: SIContentService__MaxAvatarSizeMb
+              value: '{{ .Values.options.maxAvatarizeMb }}'
+            - name: SIContentService__MinDriveFreeSpaceMb
+              value: '{{ .Values.options.minDriveFreeSpaceMb }}'
+            - name: SIContentService__MinDriveCriticalSpaceMb
+              value: '{{ .Values.options.minDriveCriticalSpaceMb }}'
+            - name: SIContentService__MaxPackageLifetime
+              value: '{{ .Values.options.maxPackageLifetime }}'
+            - name: SIContentService__MaxAvatarLifetime
+              value: '{{ .Values.options.maxAvatarLifetime }}'
+            - name: SIContentService__CleaningInterval
+              value: '{{ .Values.options.cleaningInterval }}'
+            - name: Serilog__MinimumLevel
+              value: Information
+          volumeMounts:
+          - name: shared-data
+            mountPath: /opt
+          - name: log
+            mountPath: /app/logs
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        - name: nginx
+          image: 'nginx:{{ .Values.image.nginxTag }}'
+          volumeMounts:
+          - name: shared-data
+            mountPath: /usr/share/nginx/html
+          - name: nginx-log
+            mountPath: /var/log/nginx/
+          - name: nginx-configmap
+            mountPath: /etc/nginx/nginx.conf
+            subPath: nginx.conf
+          resources:
+            {{- toYaml .Values.nginxResources | nindent 12 }}
+            

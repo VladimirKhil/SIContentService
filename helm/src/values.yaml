@@ -36,6 +36,7 @@ nginxLogPath: ''
 maxUploadSize: '101m'
 
 options:
+  logLevel: Warning
   maxPackageSizeMb: 100
   maxAvatarizeMb: 1
   minDriveFreeSpaceMb: 7000

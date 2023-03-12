@@ -72,7 +72,7 @@ spec:
             - name: SIContentService__CleaningInterval
               value: '{{ .Values.options.cleaningInterval }}'
             - name: Serilog__MinimumLevel
-              value: Information
+              value: '{{ .Values.options.logLevel }}'
           volumeMounts:
           - name: shared-data
             mountPath: /opt

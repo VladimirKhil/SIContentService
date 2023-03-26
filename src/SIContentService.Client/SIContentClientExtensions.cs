@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 using Polly;
 using Polly.Extensions.Http;
 using SIContentService.Contract;
@@ -72,7 +73,17 @@ public static class SIContentClientExtensions
             handler = progressHandler;
         }
 
-        var client = new HttpClient(handler)
+        var policyHandler = new PolicyHttpMessageHandler(
+            HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .WaitAndRetryAsync(
+                    options.RetryCount,
+                    retryAttempt => TimeSpan.FromSeconds(Math.Pow(1.5, retryAttempt))))
+        {
+            InnerHandler = handler
+        };
+
+        var client = new HttpClient(policyHandler)
         {
             BaseAddress = options.ServiceUri,
             Timeout = options.Timeout,

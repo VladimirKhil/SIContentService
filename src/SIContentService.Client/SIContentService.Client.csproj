@@ -8,8 +8,9 @@
 	<Description>Http client for SIContent service</Description>
 	<PackageTags>SIContent</PackageTags>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageId>VKhil.SIContentService.Client</PackageId>
-	<Version>1.0.3</Version>
+	<Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +31,8 @@
 	  <Pack>True</Pack>
 	  <PackagePath></PackagePath>
     </None>
+	
+	<None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

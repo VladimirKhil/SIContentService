@@ -8,8 +8,9 @@
 	<Description>SIContent service contract</Description>
 	<PackageTags>SIContent</PackageTags>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageId>VKhil.SIContentService.Contract</PackageId>
-	<Version>1.0.3</Version>
+	<Version>1.0.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -22,6 +23,8 @@
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
 		</None>
+	
+	  <None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>

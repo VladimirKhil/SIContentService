@@ -119,7 +119,10 @@ public sealed class ContentController : ControllerBase
         string packageName,
         CancellationToken cancellationToken = default)
     {
-        var packagePath = await _packageService.TryGetPackagePathAsync(packageName, packageHash, cancellationToken);
+        var decodedHash = Uri.UnescapeDataString(packageHash);
+        var decodedName = Uri.UnescapeDataString(packageName);
+
+        var packagePath = await _packageService.TryGetPackagePathAsync(decodedName, decodedHash, cancellationToken);
         return packagePath != null ? Ok($"/packages/{Path.GetFileName(packagePath)}") : NotFound();
     }
 
@@ -160,13 +163,10 @@ public sealed class ContentController : ControllerBase
         }
 
         var md5Headers = Request.Headers.ContentMD5;
-        var avatarHashString = md5Headers.Count > 0 ? md5Headers[0] : file.Name;
 
-        if (avatarHashString == null)
-        {
-            throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
-        }
-
+        var avatarHashString = (md5Headers.Count > 0 ? md5Headers[0] : file.Name)
+            ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
+        
         var avatarPath = await _avatarService.AddAvatarAsync(
             avatarName,
             avatarHashString,
@@ -178,7 +178,10 @@ public sealed class ContentController : ControllerBase
     [HttpGet("avatars/{avatarHash}/{avatarName}")]
     public async Task<ActionResult<string?>> GetAvatarUriAsync(string avatarHash, string avatarName, CancellationToken cancellationToken = default)
     {
-        var avatarPath = await _avatarService.TryGetAvatarPathAsync(avatarName, avatarHash, cancellationToken);
+        var decodedHash = Uri.UnescapeDataString(avatarHash);
+        var decodedName = Uri.UnescapeDataString(avatarName);
+
+        var avatarPath = await _avatarService.TryGetAvatarPathAsync(decodedName, decodedHash, cancellationToken);
         return avatarPath != null ? Ok($"/avatars/{Path.GetFileName(avatarPath)}") : NotFound();
     }
 
@@ -233,14 +236,9 @@ public sealed class ContentController : ControllerBase
 
             var fileName = StringHelper.UnquoteValue(fileNameValue);
             var packageName = StringHelper.UnquoteValue(packageNameValue);
-            var packageHashString = md5Headers.Count > 0 ? md5Headers[0] : fileName;
 
-            if (packageHashString == null)
-            {
-                throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
-            }
-
-            var packageHash = Convert.FromBase64String(packageHashString);
+            var packageHashString = (md5Headers.Count > 0 ? md5Headers[0] : fileName)
+                ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
 
             return await _packageService.ImportUserPackageAsync(targetFilePath, packageName, packageHashString, cancellationToken);
         }

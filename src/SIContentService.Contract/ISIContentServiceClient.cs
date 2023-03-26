@@ -5,7 +5,7 @@ namespace SIContentService.Contract;
 /// <summary>
 /// Defines a SIContentService client.
 /// </summary>
-public interface ISIContentServiceClient
+public interface ISIContentServiceClient : IDisposable
 {
     /// <summary>
     /// Gets package public uri.

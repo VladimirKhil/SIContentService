@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SIContentService.Client;
 using SIContentService.Contract;
 
@@ -7,6 +8,8 @@ namespace SIContentService.IntegrationTests;
 
 public abstract class TestsBase
 {
+    protected SIContentClientOptions SIContentClientOptions { get; }
+
     protected ISIContentServiceClient SIContentClient { get; }
 
     protected static bool TestNginxPart => false;
@@ -20,6 +23,7 @@ public abstract class TestsBase
         serviceCollection.AddSIContentServiceClient(configuration);
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
+        SIContentClientOptions = serviceProvider.GetRequiredService<IOptions<SIContentClientOptions>>().Value;
         SIContentClient = serviceProvider.GetRequiredService<ISIContentServiceClient>();
     }
 }

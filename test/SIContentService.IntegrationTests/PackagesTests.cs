@@ -1,4 +1,5 @@
-﻿using SIContentService.Contract.Models;
+﻿using SIContentService.Client;
+using SIContentService.Contract.Models;
 using System.Net;
 
 namespace SIContentService.IntegrationTests;
@@ -17,7 +18,7 @@ public sealed class PackagesTests : TestsBase
         string packageUri;
 
         using (var fs = File.OpenRead("TestPackage.siq"))
-        {
+        {            
             packageUri = await SIContentClient.UploadPackageAsync(packageKey, fs);
         }
 
@@ -38,5 +39,36 @@ public sealed class PackagesTests : TestsBase
 
         var contentResponse = await SIContentClient.GetAsync(packageUri + "/content.xml");
         Assert.That(contentResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized), $"Content status code: {contentResponse.StatusCode}");
+    }
+
+    [Test]
+    public async Task UploadPackage_WithCustomBuilderProgress_Ok()
+    {
+        var previousProgress = 0;
+        var progressCounter = 0;
+
+        void progressHandler(int progress)
+        {
+            progressCounter++;
+
+            Assert.That(progress, Is.GreaterThanOrEqualTo(previousProgress).And.LessThanOrEqualTo(100));
+            previousProgress = progress;
+        }
+
+        var client = SIContentClientExtensions.CreateSIContentServiceClient(
+            SIContentClientOptions,
+            progressHandler);
+
+        var packageKey = new FileKey("test_" + new Random().Next(10000), new byte[] { 1, 2, 3 });
+
+        string packageUri;
+
+        using (var fs = File.OpenRead("TestPackage.siq"))
+        {
+            packageUri = await client.UploadPackageAsync(packageKey, fs);
+        }
+
+        Assert.That(packageUri, Is.Not.Null);
+        Assert.That(progressCounter, Is.GreaterThan(0));
     }
 }

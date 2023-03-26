@@ -174,5 +174,6 @@ public sealed class AvatarService : IAvatarService
     private string BuildAvatarPath(string avatarName, string avatarHashString) =>
         Path.Combine(
             _rootFolder,
-            $"{avatarHashString.EscapeHashForPath()}_{avatarName.HashString().EscapeHashForPath()}{Path.GetExtension(avatarName)}");
+            $"{avatarHashString.HashString().EscapeHashForPath()}_{avatarName.HashString().EscapeHashForPath()}" +
+            $"{SecurityHelper.GetSafeExtension(Path.GetExtension(avatarName))}");
 }

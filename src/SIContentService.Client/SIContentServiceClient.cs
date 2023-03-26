@@ -58,6 +58,8 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
     public Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken = default) =>
         _client.GetAsync(RemoveLeadingSlash(requestUri), cancellationToken);
 
+    public void Dispose() => _client.Dispose();
+
     private static string? RemoveLeadingSlash(string requestUri) => requestUri.StartsWith('/') ? requestUri[1..] : requestUri;
 
     private async Task<string> UploadContentAsync(

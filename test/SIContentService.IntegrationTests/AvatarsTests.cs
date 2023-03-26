@@ -1,5 +1,5 @@
 ﻿using SIContentService.Contract.Models;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace SIContentService.IntegrationTests;
 
@@ -9,9 +9,10 @@ internal sealed class AvatarsTests : TestsBase
     [Test]
     public async Task UploadAvatar_Ok()
     {
-        var testName = $"test_{new Random().Next(10000)}.jpg";
-        var testBytes = Encoding.UTF8.GetBytes(testName);
-        var fileKey = new FileKey(testName, testBytes);
+        var testName = $"te st_{new Random().Next(10000)}.jpg";
+        var testBytes = Enumerable.Range(0, 200).Select(n => (byte)n).ToArray();
+        var testHash = MD5.HashData(testBytes);
+        var fileKey = new FileKey(testName, testHash);
 
         var noAvatar = await SIContentClient.TryGetAvatarUriAsync(fileKey);
         Assert.That(noAvatar, Is.Null);

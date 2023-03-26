@@ -1,0 +1,46 @@
+{
+  "name": "sicontent-client",
+  "version": "1.0.0",
+  "description": "SIContent Service web client",
+  "main": "dist/SIContentClient.js",
+  "types": "dist/SIContentClient.d.ts",
+  "scripts": {
+    "build": "webpack",
+    "build:types": "tsc --emitDeclarationOnly",
+    "test": "jest",
+    "lint": "eslint . --ext .ts --ext .tsx"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VladimirKhil/SIContentService.git"
+  },
+  "keywords": [
+    "sicontent",
+    "sigame"
+  ],
+  "author": "Vladimir Khil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VladimirKhil/SIContentService/issues"
+  },
+  "homepage": "https://github.com/VladimirKhil/SIContentService#readme",
+  "dependencies": {
+    "rusha": "^0.8.14"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "@types/jest": "^29.5.0",
+    "ts-loader": "^9.4.2",
+    "eslint": "^8.36.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.0.5",
+    "typescript": "^4.9.5",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  }
+}

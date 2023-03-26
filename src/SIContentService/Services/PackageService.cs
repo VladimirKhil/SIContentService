@@ -143,7 +143,7 @@ public sealed class PackageService : IPackageService
     private string BuildPackagePath(string packageName, string packageHashString) =>
         Path.Combine(
             _rootFolder,
-            $"{packageHashString.EscapeHashForPath()}_{packageName.HashString().EscapeHashForPath()}");
+            $"{packageHashString.HashString().EscapeHashForPath()}_{packageName.HashString().EscapeHashForPath()}");
 
     private Task<string?> UpdatePackageUsageAsync(string packagePath, CancellationToken cancellationToken) =>
         _locker.DoWithLockAsync(
@@ -185,7 +185,7 @@ public sealed class PackageService : IPackageService
             var filteredFiles = await ZipHelper.ExtractToDirectoryAsync(
                 filePath,
                 extractedFilePath,
-                ExtractedFileNamingModes.Hash,
+                ExtractedFileNamingModes.Hash, // This guarantees that we never use user-provided file names
                 (long)(_options.MaxPackageSizeMb) * 1024 * 1024 * UnZipMaxFactor,
                 null,
                 cancellationToken);

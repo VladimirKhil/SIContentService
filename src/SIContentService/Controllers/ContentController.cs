@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using SIContentService.Attributes;
 using SIContentService.Configuration;
+using SIContentService.Contract.Helpers;
 using SIContentService.Contract.Models;
 using SIContentService.Contracts;
 using SIContentService.Exceptions;
@@ -119,10 +120,9 @@ public sealed class ContentController : ControllerBase
         string packageName,
         CancellationToken cancellationToken = default)
     {
-        var decodedHash = Uri.UnescapeDataString(packageHash);
         var decodedName = Uri.UnescapeDataString(packageName);
 
-        var packagePath = await _packageService.TryGetPackagePathAsync(decodedName, decodedHash, cancellationToken);
+        var packagePath = await _packageService.TryGetPackagePathAsync(decodedName, packageHash, cancellationToken);
         return packagePath != null ? Ok($"/packages/{Path.GetFileName(packagePath)}") : NotFound();
     }
 
@@ -169,7 +169,7 @@ public sealed class ContentController : ControllerBase
         
         var avatarPath = await _avatarService.AddAvatarAsync(
             avatarName,
-            avatarHashString,
+            Base64Helper.EscapeBase64(avatarHashString),
             stream => file.CopyToAsync(stream, cancellationToken));
 
         return Ok($"/avatars/{Path.GetFileName(avatarPath)}");
@@ -178,10 +178,11 @@ public sealed class ContentController : ControllerBase
     [HttpGet("avatars/{avatarHash}/{avatarName}")]
     public async Task<ActionResult<string?>> GetAvatarUriAsync(string avatarHash, string avatarName, CancellationToken cancellationToken = default)
     {
-        var decodedHash = Uri.UnescapeDataString(avatarHash);
+        _logger.LogInformation("Avatar uri requested. Name: {name}, hash: {hash}", avatarName, avatarHash);
+
         var decodedName = Uri.UnescapeDataString(avatarName);
 
-        var avatarPath = await _avatarService.TryGetAvatarPathAsync(decodedName, decodedHash, cancellationToken);
+        var avatarPath = await _avatarService.TryGetAvatarPathAsync(decodedName, avatarHash, cancellationToken);
         return avatarPath != null ? Ok($"/avatars/{Path.GetFileName(avatarPath)}") : NotFound();
     }
 
@@ -240,7 +241,11 @@ public sealed class ContentController : ControllerBase
             var packageHashString = (md5Headers.Count > 0 ? md5Headers[0] : fileName)
                 ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
 
-            return await _packageService.ImportUserPackageAsync(targetFilePath, packageName, packageHashString, cancellationToken);
+            return await _packageService.ImportUserPackageAsync(
+                targetFilePath,
+                packageName,
+                Base64Helper.EscapeBase64(packageHashString),
+                cancellationToken);
         }
         finally
         {

@@ -5,7 +5,8 @@ import { randomBytes } from 'crypto';
 import { PACKAGE_DATA } from './packageData';
 
 const options: SIContentClientOptions = {
-	serviceUri: 'http://localhost:5165'//'http://vladimirkhil.com/sicontent'
+	//serviceUri: 'http://localhost:5165'
+	serviceUri: 'http://vladimirkhil.com/sicontent'
 };
 
 const siContentClient = new SIContentClient(options);
@@ -19,7 +20,7 @@ test('Upload avatar', async () => {
 
 	const avatarKey: FileKey = {
 		name: `test_${Math.random()}.jpg`,
-		hash: Buffer.from(avatarHash).toString('base64')
+		hash: '2edejb/' + Buffer.from(avatarHash).toString('base64')
 	};
 
 	const noAvatar = await siContentClient.tryGetAvatarUriAsync(avatarKey);

@@ -14,7 +14,7 @@
       "declaration": true
     },
     "include": [
-      "src", "test"
+      "src"
     ],
     "compileOnSave": false
 }

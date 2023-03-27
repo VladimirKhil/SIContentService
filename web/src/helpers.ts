@@ -18,3 +18,10 @@ export async function hashDataAsync(data: ArrayBuffer): Promise<ArrayBuffer> {
 
 	return Rusha.createHash().update(data).digest();
 }
+
+/** Escapes Base64 string.
+ * @param base64value Base64 string.
+ */
+export function escapeBase64(base64value: string): string {
+	return base64value.replace('/', '_').replace('+', '-').replace('=', '');
+}

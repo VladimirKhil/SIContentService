@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using SIContentService.Configuration;
+using SIContentService.Contract.Helpers;
 using SIContentService.Contract.Models;
 using SIContentService.Contracts;
 using SIContentService.Exceptions;
@@ -141,9 +142,7 @@ public sealed class PackageService : IPackageService
     }
 
     private string BuildPackagePath(string packageName, string packageHashString) =>
-        Path.Combine(
-            _rootFolder,
-            $"{packageHashString.HashString().EscapeHashForPath()}_{packageName.HashString().EscapeHashForPath()}");
+        Path.Combine(_rootFolder, $"{packageHashString.HashString()}_{packageName.HashString()}");
 
     private Task<string?> UpdatePackageUsageAsync(string packagePath, CancellationToken cancellationToken) =>
         _locker.DoWithLockAsync(

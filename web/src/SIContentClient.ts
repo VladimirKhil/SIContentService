@@ -1,6 +1,6 @@
 import SIContentClientOptions from './SIContentClientOptions';
 import FileKey from './models/FileKey';
-import { encodeBase64, hashDataAsync } from './helpers';
+import { encodeBase64, escapeBase64, hashDataAsync } from './helpers';
 
 export { encodeBase64, hashDataAsync };
 
@@ -16,14 +16,14 @@ export default class SIContentClient {
 	 * @param packageKey Unqiue package key.
 	 */
 	async tryGetPackageUriAsync(packageKey: FileKey) {
-		return this.getInternalAsync(`content/packages/${encodeURIComponent(packageKey.hash)}/${encodeURIComponent(packageKey.name)}`);
+		return this.getInternalAsync(`content/packages/${escapeBase64(packageKey.hash)}/${encodeURIComponent(packageKey.name)}`);
 	}
 
 	/** Gets avatar public uri.
 	 * @param avatarKey Unqiue avatar key.
 	 */
 	async tryGetAvatarUriAsync(avatarKey: FileKey) {
-		return this.getInternalAsync(`content/avatars/${encodeURIComponent(avatarKey.hash)}/${encodeURIComponent(avatarKey.name)}`);
+		return this.getInternalAsync(`content/avatars/${escapeBase64(avatarKey.hash)}/${encodeURIComponent(avatarKey.name)}`);
 	}
 
 	/**

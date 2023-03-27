@@ -30,31 +30,35 @@ public sealed class AvatarService : IAvatarService
 
     public async Task<string> AddAvatarAsync(string avatarName, string avatarHashString, Func<Stream, Task> fileWriteAsync)
     {
-        var filePath = BuildAvatarPath(avatarName, avatarHashString);
+        var avatarPath = BuildAvatarPath(avatarName, avatarHashString);
 
-        if (File.Exists(filePath))
+        _logger.LogInformation("Adding avatar. Name: {name}, hash: {hash}, path: {path}", avatarName, avatarHashString, avatarPath);
+
+        if (File.Exists(avatarPath))
         {
-            return filePath;
+            return avatarPath;
         }
 
         Directory.CreateDirectory(_rootFolder);
 
         await _locker.DoAsync(
-            filePath,
+            avatarPath,
             async () =>
             {
-                using var fs = File.Create(filePath);
+                using var fs = File.Create(avatarPath);
 
                 // Do not remove await because fs would be disposed after return
                 await fileWriteAsync(fs);
             });
 
-        return filePath;
+        return avatarPath;
     }
 
     public Task<string?> TryGetAvatarPathAsync(string avatarName, string avatarHashString, CancellationToken cancellationToken = default)
     {
         var avatarPath = BuildAvatarPath(avatarName, avatarHashString);
+
+        _logger.LogInformation("Getting avatar. Name: {name}, hash: {hash}, path: {path}", avatarName, avatarHashString, avatarPath);
 
         return UpdateAvatarUsageAsync(avatarPath, cancellationToken);
     }
@@ -174,6 +178,6 @@ public sealed class AvatarService : IAvatarService
     private string BuildAvatarPath(string avatarName, string avatarHashString) =>
         Path.Combine(
             _rootFolder,
-            $"{avatarHashString.HashString().EscapeHashForPath()}_{avatarName.HashString().EscapeHashForPath()}" +
+            $"{avatarHashString.HashString()}_{avatarName.HashString()}" +
             $"{SecurityHelper.GetSafeExtension(avatarName)}");
 }

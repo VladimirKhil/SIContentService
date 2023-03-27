@@ -1,5 +1,6 @@
 ﻿using SIContentService.Client.Properties;
 using SIContentService.Contract;
+using SIContentService.Contract.Helpers;
 using SIContentService.Contract.Models;
 using System.Net;
 using System.Text.Json;
@@ -25,8 +26,11 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
     {
         try
         {
+            var avatarHash = Base64Helper.EscapeBase64(Convert.ToBase64String(avatarKey.Hash));
+            var avatarName = Uri.EscapeDataString(avatarKey.Name);
+
             return await _client.GetStringAsync(
-                $"{ApiPrefix}content/avatars/{Uri.EscapeDataString(Convert.ToBase64String(avatarKey.Hash))}/{Uri.EscapeDataString(avatarKey.Name)}",
+                $"{ApiPrefix}content/avatars/{avatarHash}/{avatarName}",
                 cancellationToken);
         }
         catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)
@@ -39,8 +43,11 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
     {
         try
         {
+            var packageHash = Base64Helper.EscapeBase64(Convert.ToBase64String(packageKey.Hash));
+            var packageName = Uri.EscapeDataString(packageKey.Name);
+
             return await _client.GetStringAsync(
-                $"{ApiPrefix}content/packages/{Uri.EscapeDataString(Convert.ToBase64String(packageKey.Hash))}/{Uri.EscapeDataString(packageKey.Name)}",
+                $"{ApiPrefix}content/packages/{packageHash}/{packageName}",
                 cancellationToken);
         }
         catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)

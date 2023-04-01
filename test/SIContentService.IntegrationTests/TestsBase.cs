@@ -12,7 +12,7 @@ public abstract class TestsBase
 
     protected ISIContentServiceClient SIContentClient { get; }
 
-    protected static bool TestNginxPart => false;
+    protected static bool TestNginxPart => true;
 
     public TestsBase()
     {

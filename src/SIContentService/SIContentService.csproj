@@ -16,9 +16,10 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
+    <PackageReference Include="Ensure.That" Version="10.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-    <PackageReference Include="SIPackages" Version="7.9.6" />
+    <PackageReference Include="VKhil.ZipUtils" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

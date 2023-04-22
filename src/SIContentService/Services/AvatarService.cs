@@ -25,7 +25,7 @@ public sealed class AvatarService : IAvatarService
         _options = options.Value;
         _logger = logger;
 
-        _rootFolder = Path.Combine(options.Value.ContentFolder, "avatars");
+        _rootFolder = Path.Combine(StringHelper.BuildRootedPath(options.Value.ContentFolder), "avatars");
     }
 
     public async Task<string> AddAvatarAsync(string avatarName, string avatarHashString, Func<Stream, Task> fileWriteAsync)

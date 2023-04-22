@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Options;
 using SIContentService.Configuration;
-using SIContentService.Contract.Helpers;
 using SIContentService.Contract.Models;
 using SIContentService.Contracts;
 using SIContentService.Exceptions;
 using SIContentService.Helpers;
 using SIContentService.Models;
-using SIPackages.Helpers;
 using System.Net;
 using System.Text.Json;
+using ZipUtils;
 
 namespace SIContentService.Services;
 
@@ -25,7 +24,9 @@ public sealed class PackageService : IPackageService
     private readonly ILogger<PackageService> _logger;
     private readonly string _rootFolder;
 
-    public PackageService(
+    private readonly ExtractionOptions _extractionOptions;
+
+public PackageService(
         IStorageService storageService,
         IOptions<SIContentServiceOptions> options, 
         ILogger<PackageService> logger)
@@ -34,7 +35,13 @@ public sealed class PackageService : IPackageService
         _options = options.Value;
         _logger = logger;
 
-        _rootFolder = Path.Combine(_options.ContentFolder, "packages");
+        _rootFolder = Path.Combine(StringHelper.BuildRootedPath(options.Value.ContentFolder), "packages");
+
+        _extractionOptions = new ExtractionOptions(NamingModeSelector)
+        {
+            MaxAllowedDataLength = (long)(_options.MaxPackageSizeMb) * 1024 * 1024 * UnZipMaxFactor,
+            FileFilter = FileFilter
+        };
     }
 
     public async Task<string> ImportUserPackageAsync(
@@ -180,19 +187,13 @@ public sealed class PackageService : IPackageService
     {
         try
         {
-            // TODO: rewrite without SIPackages
-            var filteredFiles = await ZipHelper.ExtractToDirectoryAsync(
+            var extractedFiles = await ZipExtractor.ExtractArchiveFileToFolderAsync(
                 filePath,
                 extractedFilePath,
-                ExtractedFileNamingModes.Hash, // This guarantees that we never use user-provided file names
-                (long)(_options.MaxPackageSizeMb) * 1024 * 1024 * UnZipMaxFactor,
-                null,
+                _extractionOptions,
                 cancellationToken);
 
-            if (filteredFiles.Length > 0)
-            {
-                File.WriteAllLines(Path.Combine(extractedFilePath, "filtered.txt"), filteredFiles);
-            }
+            File.WriteAllLines(Path.Combine(extractedFilePath, "files.txt"), extractedFiles);
         }
         catch (InvalidDataException exc)
         {
@@ -227,5 +228,27 @@ public sealed class PackageService : IPackageService
                 HttpStatusCode.BadRequest,
                 exc);
         }
+    }
+
+    private static UnzipNamingMode NamingModeSelector(string name) => name switch
+    {
+        "content.xml" or "Texts/authors.xml" or "Texts/sources.xml" => UnzipNamingMode.KeepOriginal,
+        _ => UnzipNamingMode.Hash // This guarantees that we never use user-provided file names
+    };
+
+    private static bool FileFilter(string filePath)
+    {
+        if (filePath == "content.xml")
+        {
+            return true;
+        }
+
+        var folderName = Path.GetDirectoryName(filePath);
+
+        return folderName switch
+        {
+            "Images" or "Audio" or "Video" or "Texts" => true,
+            _ => false
+        };
     }
 }

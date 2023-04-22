@@ -1,7 +1,10 @@
 using AspNetCoreRateLimit;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Serilog;
 using SIContentService.Configuration;
 using SIContentService.Contracts;
+using SIContentService.Helpers;
 using SIContentService.Middlewares;
 using SIContentService.Services;
 using SIContentService.Services.Background;
@@ -9,6 +12,7 @@ using SIContentService.Services.Background;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
+#if !DEBUG
     .WriteTo.Console()
     .WriteTo.File(
         "logs/sicontent.log",
@@ -17,6 +21,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
         rollOnFileSizeLimit: true,
         retainedFileCountLimit: 5,
         flushToDiskInterval: TimeSpan.FromSeconds(1))
+#endif
     .ReadFrom.Configuration(ctx.Configuration)); // Not working when Assembly is trimmed
 
 ConfigureServices(builder.Services, builder.Configuration);
@@ -46,7 +51,16 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
 
 static void Configure(WebApplication app)
 {
+    var options = app.Services.GetRequiredService<IOptions<SIContentServiceOptions>>().Value;
+
     app.UseMiddleware<ErrorHandlingMiddleware>();
+
+    if (options.ServeStaticFiles)
+    {
+        var contentPath = StringHelper.BuildRootedPath(options.ContentFolder);
+        Directory.CreateDirectory(contentPath);
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(contentPath) });
+    }
 
     app.UseRouting();
     app.MapControllers();

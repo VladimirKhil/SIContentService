@@ -71,6 +71,8 @@ spec:
               value: '{{ .Values.options.maxAvatarLifetime }}'
             - name: SIContentService__CleaningInterval
               value: '{{ .Values.options.cleaningInterval }}'
+            - name: SIContentService__ServeStaticFiles
+              value: '{{ .Values.options.serveStaticFiles }}'
             - name: Serilog__MinimumLevel
               value: '{{ .Values.options.logLevel }}'
           volumeMounts:

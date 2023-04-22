@@ -32,7 +32,7 @@ spec:
     - http:
         paths:
           {{- range .paths }}
-          - path: {{ . }}/packages/(.+)/content.xml
+          - path: {{ . }}/packages/(.+)/(content.xml|files.txt)
             pathType: Prefix
             backend:
               service:

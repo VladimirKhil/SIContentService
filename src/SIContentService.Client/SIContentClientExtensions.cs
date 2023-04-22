@@ -6,6 +6,8 @@ using Polly.Extensions.Http;
 using SIContentService.Contract;
 using System.Net;
 using System.Net.Http.Handlers;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace SIContentService.Client;
 
@@ -33,6 +35,8 @@ public static class SIContentClientExtensions
                 {
                     client.BaseAddress = options.ServiceUri;
                     client.Timeout = options.Timeout;
+
+                    SetAuthSecret(options, client);
                 }
                 
                 client.DefaultRequestVersion = HttpVersion.Version20;
@@ -90,6 +94,19 @@ public static class SIContentClientExtensions
             DefaultRequestVersion = HttpVersion.Version20
         };
 
+        SetAuthSecret(options, client);
+
         return new SIContentServiceClient(client);
+    }
+
+    private static void SetAuthSecret(SIContentClientOptions options, HttpClient client)
+    {
+        if (options.ClientSecret == null)
+        {
+            return;
+        }
+
+        var authHeader = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"admin:{options.ClientSecret}"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authorization", authHeader);
     }
 }

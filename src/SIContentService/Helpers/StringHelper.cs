@@ -19,4 +19,9 @@ internal static class StringHelper
 
         return value;
     }
+
+    internal static string BuildRootedPath(string path) =>
+        Path.IsPathRooted(path)
+            ? path
+            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
 }

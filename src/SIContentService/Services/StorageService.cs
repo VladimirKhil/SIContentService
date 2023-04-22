@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using SIContentService.Configuration;
 using SIContentService.Contracts;
+using SIContentService.Helpers;
 
 namespace SIContentService.Services;
 
@@ -14,12 +15,7 @@ internal sealed class StorageService : IStorageService
     public StorageService(IOptions<SIContentServiceOptions> options)
     {
         _options = options.Value;
-        var root = Path.GetPathRoot(_options.ContentFolder);
-
-        if (string.IsNullOrEmpty(root))
-        {
-            root = Path.GetPathRoot(Environment.CurrentDirectory);
-        }
+        var root = Path.GetPathRoot(StringHelper.BuildRootedPath(options.Value.ContentFolder));
 
         Ensure.That(root).IsNotNull();
 

@@ -46,4 +46,9 @@ public sealed class SIContentServiceOptions
     /// Cleaning old files interval.
     /// </summary>
     public TimeSpan CleaningInterval { get; set; } = TimeSpan.FromMinutes(30);
+
+    /// <summary>
+    /// Should the service serve static content by itself.
+    /// </summary>
+    public bool ServeStaticFiles { get; set; } = true;
 }

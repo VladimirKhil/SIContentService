@@ -21,6 +21,11 @@ public sealed class SIContentClientOptions
     public Uri? ServiceUri { get; set; }
 
     /// <summary>
+    /// Secret to access restricted files.
+    /// </summary>
+    public string? ClientSecret { get; set; }
+
+    /// <summary>
     /// Retry count policy.
     /// </summary>
     public int RetryCount { get; set; } = DefaultRetryCount;

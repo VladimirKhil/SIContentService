@@ -30,11 +30,6 @@ internal sealed class AvatarsTests : TestsBase
         var avatarUri2 = await SIContentClient.TryGetAvatarUriAsync(fileKey);
         Assert.That(avatarUri2, Is.EqualTo(avatarUri));
 
-        if (!TestNginxPart)
-        {
-            return;
-        }
-
         var contentResponse = await SIContentClient.GetAsync(avatarUri);
 
         Assert.That(contentResponse.IsSuccessStatusCode, $"{contentResponse.StatusCode}: {await contentResponse.Content.ReadAsStringAsync()}");

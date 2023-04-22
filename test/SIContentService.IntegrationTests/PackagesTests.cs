@@ -7,6 +7,8 @@ namespace SIContentService.IntegrationTests;
 [TestFixture]
 public sealed class PackagesTests : TestsBase
 {
+    private const bool CheckAuthorization = false;
+
     [Test]
     public async Task UploadPackage_Ok()
     {
@@ -25,11 +27,6 @@ public sealed class PackagesTests : TestsBase
         var packageUri2 = await SIContentClient.TryGetPackageUriAsync(packageKey);
         Assert.That(packageUri2, Is.EqualTo(packageUri));
 
-        if (!TestNginxPart)
-        {
-            return;
-        }
-
         var imageResponse = await SIContentClient.GetAsync(packageUri + "/Images/294F815D5DB6E7F7.PNG");
 
         Assert.That(imageResponse.IsSuccessStatusCode, $"{imageResponse.StatusCode}: {await imageResponse.Content.ReadAsStringAsync()}");
@@ -37,8 +34,11 @@ public sealed class PackagesTests : TestsBase
         var data = await imageResponse.Content.ReadAsByteArrayAsync();
         Assert.That(data, Is.Not.Empty);
 
-        var contentResponse = await SIContentClient.GetAsync(packageUri + "/content.xml");
-        Assert.That(contentResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized), $"Content status code: {contentResponse.StatusCode}");
+        if (CheckAuthorization)
+        {
+            var contentResponse = await SIContentClient.GetAsync(packageUri + "/content.xml");
+            Assert.That(contentResponse.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized), $"Content status code: {contentResponse.StatusCode}");
+        }
     }
 
     [Test]

@@ -12,8 +12,6 @@ public abstract class TestsBase
 
     protected ISIContentServiceClient SIContentClient { get; }
 
-    protected static bool TestNginxPart => true;
-
     public TestsBase()
     {
         var builder = new ConfigurationBuilder().AddJsonFile("appsettings.json");

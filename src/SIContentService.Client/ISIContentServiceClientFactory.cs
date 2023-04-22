@@ -11,5 +11,6 @@ public interface ISIContentServiceClientFactory
     /// Creates SIContentService client with custom service uri.
     /// </summary>
     /// <param name="serviceUri">Service uri.</param>
-    ISIContentServiceClient CreateClient(Uri? serviceUri = null);
+    /// <param name="clientSecret">Optional client secret.</param>
+    ISIContentServiceClient CreateClient(Uri? serviceUri = null, string? clientSecret = null);
 }

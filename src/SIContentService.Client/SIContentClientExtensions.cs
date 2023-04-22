@@ -106,7 +106,7 @@ public static class SIContentClientExtensions
             return;
         }
 
-        var authHeader = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"admin:{options.ClientSecret}"));
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authorization", authHeader);
+        var authHeader = Convert.ToBase64String(Encoding.ASCII.GetBytes($"admin:{options.ClientSecret}"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
     }
 }

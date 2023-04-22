@@ -10,7 +10,7 @@
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageId>VKhil.SIContentService.Contract</PackageId>
-	<Version>1.0.7</Version>
+	<Version>1.0.8</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -18,13 +18,13 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="LICENSE">
-			<Pack>True</Pack>
-			<PackagePath></PackagePath>
-		</None>
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
 	
-	  <None Include="README.md" Pack="true" PackagePath="\" />
-	</ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

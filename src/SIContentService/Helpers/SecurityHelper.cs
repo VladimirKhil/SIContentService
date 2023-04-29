@@ -12,8 +12,8 @@ public static partial class SecurityHelper
 {
     private const int ExtensionMaxLength = 4;
 
-    [GeneratedRegex("[^a-zA-Z]+")]
-    private static partial Regex OnlyCharsRegex();
+    [GeneratedRegex("[^a-zA-Z0-9]+")]
+    private static partial Regex OnlyCharsAndDigitsRegex();
 
     internal static string HashString(this string value) =>
         Base64Helper.EscapeBase64(Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(value))));
@@ -28,6 +28,6 @@ public static partial class SecurityHelper
         var extension = Path.GetExtension(path);
         var maxLength = Math.Min(ExtensionMaxLength, extension.Length - 1);
 
-        return '.' + OnlyCharsRegex().Replace(extension.Substring(1, maxLength), "");
+        return '.' + OnlyCharsAndDigitsRegex().Replace(extension.Substring(1, maxLength), "");
     }
 }

@@ -37,6 +37,8 @@ data:
         reset_timedout_connection on;
         client_header_timeout 12s; # added
         client_body_timeout 12s; # added
+        client_body_buffer_size 1m; # added
+        client_max_body_size {{ .Values.maxUploadSize }}; # updated
         server_tokens off;
 
         open_file_cache max=200000 inactive=20s; # added

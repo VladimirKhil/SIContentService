@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   sicontent:
   - apiVersion: v2
+    appVersion: 1.0.5
+    created: "2023-04-29T17:24:36.5572745+02:00"
+    description: A service for uploading and retrieving SIGame content
+    digest: bb3f2cc2282ac8869b3c4fe32448d2cb5c54d6edd4bcfb98087c0292629f7ffb
+    name: sicontent
+    type: application
+    urls:
+    - sicontent-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
     appVersion: 1.0.4
-    created: "2023-04-29T10:48:45.9950372+02:00"
+    created: "2023-04-29T17:24:36.5502777+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 5a6835bc08fed70e7cd4b5ca6ecf8a1456c85bf01cb90ee7390a0e4bfa7c50ac
     name: sicontent
@@ -13,7 +23,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.3
-    created: "2023-04-29T10:48:45.9930376+02:00"
+    created: "2023-04-29T17:24:36.5482761+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: dc8410f01ffd8a6b9fe3dd3a9b4852f2e3103635d408894730620f8f0be216f3
     name: sicontent
@@ -23,7 +33,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-04-29T10:48:45.9920367+02:00"
+    created: "2023-04-29T17:24:36.5472803+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 88020e878c513a44f224626d07c8a208a0bc44c4ce9fe2a370d8c72554b8a1db
     name: sicontent
@@ -33,7 +43,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2023-04-29T10:48:45.9900386+02:00"
+    created: "2023-04-29T17:24:36.5442786+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 347fea6aa24500d9d773bb29365c1451a427d1c7aea31e5a5e274c7bf96be3a3
     name: sicontent
@@ -43,7 +53,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-04-29T10:48:45.9880628+02:00"
+    created: "2023-04-29T17:24:36.5412765+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: a5cfb136e199b459d1a0404d329e3331ded50fda4473d86548984cd73add5f91
     name: sicontent
@@ -51,4 +61,4 @@ entries:
     urls:
     - sicontent-1.0.0.tgz
     version: 1.0.0
-generated: "2023-04-29T10:48:45.9790416+02:00"
+generated: "2023-04-29T17:24:36.5372773+02:00"

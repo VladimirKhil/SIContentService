@@ -16,22 +16,26 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
 
     private readonly HttpClient _client;
 
+    public Uri? ServiceUri => _client.BaseAddress;
+
     /// <summary>
     /// Initializes a new instance of <see cref="SIContentServiceClient" /> class.
     /// </summary>
     /// <param name="client">HTTP client to use.</param>
     public SIContentServiceClient(HttpClient client) => _client = client;
 
-    public async Task<string?> TryGetAvatarUriAsync(FileKey avatarKey, CancellationToken cancellationToken = default)
+    public async Task<Uri?> TryGetAvatarUriAsync(FileKey avatarKey, CancellationToken cancellationToken = default)
     {
         try
         {
             var avatarHash = Base64Helper.EscapeBase64(Convert.ToBase64String(avatarKey.Hash));
             var avatarName = Uri.EscapeDataString(avatarKey.Name);
 
-            return await _client.GetStringAsync(
-                $"{ApiPrefix}content/avatars/{avatarHash}/{avatarName}",
-                cancellationToken);
+            return new Uri(
+                await _client.GetStringAsync(
+                    $"{ApiPrefix}content/avatars/{avatarHash}/{avatarName}",
+                    cancellationToken),
+                UriKind.RelativeOrAbsolute);
         }
         catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)
         {
@@ -39,16 +43,18 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
         }
     }
 
-    public async Task<string?> TryGetPackageUriAsync(FileKey packageKey, CancellationToken cancellationToken = default)
+    public async Task<Uri?> TryGetPackageUriAsync(FileKey packageKey, CancellationToken cancellationToken = default)
     {
         try
         {
             var packageHash = Base64Helper.EscapeBase64(Convert.ToBase64String(packageKey.Hash));
             var packageName = Uri.EscapeDataString(packageKey.Name);
 
-            return await _client.GetStringAsync(
-                $"{ApiPrefix}content/packages/{packageHash}/{packageName}",
-                cancellationToken);
+            return new Uri(
+                await _client.GetStringAsync(
+                    $"{ApiPrefix}content/packages/{packageHash}/{packageName}",
+                    cancellationToken),
+                UriKind.RelativeOrAbsolute);
         }
         catch (HttpRequestException exc) when (exc.StatusCode == HttpStatusCode.NotFound)
         {
@@ -56,10 +62,10 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
         }
     }
 
-    public Task<string> UploadAvatarAsync(FileKey avatarKey, Stream avatarStream, CancellationToken cancellationToken = default) =>
+    public Task<Uri> UploadAvatarAsync(FileKey avatarKey, Stream avatarStream, CancellationToken cancellationToken = default) =>
         UploadContentAsync($"{ApiPrefix}content/avatars", avatarKey, avatarStream, cancellationToken);
 
-    public Task<string> UploadPackageAsync(FileKey packageKey, Stream packageStream, CancellationToken cancellationToken = default) =>
+    public Task<Uri> UploadPackageAsync(FileKey packageKey, Stream packageStream, CancellationToken cancellationToken = default) =>
         UploadContentAsync($"{ApiPrefix}content/packages", packageKey, packageStream, cancellationToken);
 
     public Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken = default) =>
@@ -69,7 +75,7 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
 
     private static string? RemoveLeadingSlash(string requestUri) => requestUri.StartsWith('/') ? requestUri[1..] : requestUri;
 
-    private async Task<string> UploadContentAsync(
+    private async Task<Uri> UploadContentAsync(
         string contentUri,
         FileKey contentKey,
         Stream contentStream,
@@ -93,7 +99,7 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
                 throw new Exception(errorMessage);
             }
 
-            return await response.Content.ReadAsStringAsync(cancellationToken);
+            return new Uri(await response.Content.ReadAsStringAsync(cancellationToken), UriKind.RelativeOrAbsolute);
         }
         catch (HttpRequestException exc)
         {

@@ -8,11 +8,16 @@ namespace SIContentService.Contract;
 public interface ISIContentServiceClient : IDisposable
 {
     /// <summary>
+    /// SIContentService Uri.
+    /// </summary>
+    Uri? ServiceUri { get; }
+
+    /// <summary>
     /// Gets package public uri.
     /// </summary>
     /// <param name="packageKey">Unqiue package key.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task<string?> TryGetPackageUriAsync(FileKey packageKey, CancellationToken cancellationToken = default);
+    Task<Uri?> TryGetPackageUriAsync(FileKey packageKey, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Uploads package to service.
@@ -20,14 +25,14 @@ public interface ISIContentServiceClient : IDisposable
     /// <param name="packageKey">Unqiue package key.</param>
     /// <param name="packageStream">Package data stream.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task<string> UploadPackageAsync(FileKey packageKey, Stream packageStream, CancellationToken cancellationToken = default);
+    Task<Uri> UploadPackageAsync(FileKey packageKey, Stream packageStream, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets avatar public uri.
     /// </summary>
     /// <param name="avatarKey">Unqiue avatar key.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task<string?> TryGetAvatarUriAsync(FileKey avatarKey, CancellationToken cancellationToken = default);
+    Task<Uri?> TryGetAvatarUriAsync(FileKey avatarKey, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Uploads avatar to service.
@@ -35,7 +40,7 @@ public interface ISIContentServiceClient : IDisposable
     /// <param name="avatarKey">Unqiue avatar key.</param>
     /// <param name="avatarStream">Avatar data stream.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task<string> UploadAvatarAsync(FileKey avatarKey, Stream avatarStream, CancellationToken cancellationToken = default);
+    Task<Uri> UploadAvatarAsync(FileKey avatarKey, Stream avatarStream, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets resource by Uri.

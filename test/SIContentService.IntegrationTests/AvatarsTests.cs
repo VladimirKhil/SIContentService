@@ -17,7 +17,7 @@ internal sealed class AvatarsTests : TestsBase
         var noAvatar = await SIContentClient.TryGetAvatarUriAsync(fileKey);
         Assert.That(noAvatar, Is.Null);
 
-        string avatarUri;
+        Uri avatarUri;
 
         using (var ms = new MemoryStream())
         {
@@ -30,7 +30,7 @@ internal sealed class AvatarsTests : TestsBase
         var avatarUri2 = await SIContentClient.TryGetAvatarUriAsync(fileKey);
         Assert.That(avatarUri2, Is.EqualTo(avatarUri));
 
-        var contentResponse = await SIContentClient.GetAsync(avatarUri);
+        var contentResponse = await SIContentClient.GetAsync(avatarUri.ToString());
 
         Assert.That(contentResponse.IsSuccessStatusCode, $"{contentResponse.StatusCode}: {await contentResponse.Content.ReadAsStringAsync()}");
 

@@ -17,7 +17,7 @@ public sealed class PackagesTests : TestsBase
         var noPackage = await SIContentClient.TryGetPackageUriAsync(packageKey);
         Assert.That(noPackage, Is.Null);
 
-        string packageUri;
+        Uri packageUri;
 
         using (var fs = File.OpenRead("TestPackage.siq"))
         {            
@@ -61,7 +61,7 @@ public sealed class PackagesTests : TestsBase
 
         var packageKey = new FileKey("test_" + new Random().Next(10000), new byte[] { 1, 2, 3 });
 
-        string packageUri;
+        Uri packageUri;
 
         using (var fs = File.OpenRead("TestPackage.siq"))
         {

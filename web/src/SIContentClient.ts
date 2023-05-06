@@ -10,7 +10,7 @@ export default class SIContentClient {
 	 * Initializes a new instance of SIContentClientOptions class.
 	 * @param options Client options.
 	 */
-	constructor(private options: SIContentClientOptions) { }
+	constructor(public options: SIContentClientOptions) { }
 
 	/** Gets package public uri.
 	 * @param packageKey Unqiue package key.
@@ -39,10 +39,10 @@ export default class SIContentClient {
 
 		const formData = new FormData();
 		formData.append('file', packageData, packageKey.name);
-	
+
 		// fetch() does not support reporting progress right now
 		// Switch to fetch() when progress support would be implemented
-		
+
 		if (typeof XMLHttpRequest === 'undefined') {
 			const response = await fetch(`${this.options.serviceUri}/api/v1/content/packages`, {
 				method: 'POST',
@@ -52,17 +52,17 @@ export default class SIContentClient {
 					'Content-MD5': packageKey.hash
 				}
 			});
-		
+
 			if (!response.ok) {
 				throw new Error(`${response.status} ${await response.text()}`);
 			}
 
 			return await response.text();
 		}
-	
+
 		return new Promise<string>((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
-	
+
 			xhr.onload = () => {
 				if (xhr.status >= 200 && xhr.status < 300) {
 					resolve(xhr.responseText);
@@ -70,17 +70,17 @@ export default class SIContentClient {
 					reject(new Error(xhr.response));
 				}
 			};
-			
+
 			xhr.onerror = () => {
 				reject(new Error(xhr.statusText || xhr.responseText || xhr.status.toString()));
 			};
-	
+
 			xhr.upload.onprogress = (e) => {
 				if (onProgress) {
 					onProgress(e.loaded / e.total);
 				}
 			};
-	
+
 			xhr.open('post', `${this.options.serviceUri}/api/v1/content/packages`, true);
 			xhr.setRequestHeader('Content-MD5', packageKey.hash);
 			xhr.withCredentials = true;
@@ -96,7 +96,7 @@ export default class SIContentClient {
 	async uploadAvatarAsync(avatarKey: FileKey, avatarData: Blob) {
 		const formData = new FormData();
 		formData.append('file', avatarData, avatarKey.name);
-		
+
 		const response = await fetch(`${this.options.serviceUri}/api/v1/content/avatars`, {
 			method: 'POST',
 			credentials: 'include',
@@ -117,12 +117,16 @@ export default class SIContentClient {
 	 * Uploads package to service if it does not exist.
 	 * @param packageName Package name.
 	 * @param packageData Package data.
-	 * @param onProgress Progress callback.
+	 * @param onStartUpload Start upload callback.
+	 * @param onUploadProgress Upload progress callback.
+	 * @param onFinishUpload Finish upload callback.
 	 */
 	async uploadPackageIfNotExistAsync(
 		packageName: string,
 		packageData: Blob,
-		onProgress: (progress: number) => void) {
+		onStartUpload: () => void,
+		onUploadProgress: (progress: number) => void,
+		onFinishUpload: () => void) {
 		const packageKey: FileKey = {
 			name: packageName,
 			hash: encodeBase64(await hashDataAsync(await packageData.arrayBuffer()))
@@ -134,7 +138,13 @@ export default class SIContentClient {
 			return packageUri;
 		}
 
-		return await this.uploadPackageAsync(packageKey, packageData, onProgress);
+		onStartUpload();
+
+		try {
+			return await this.uploadPackageAsync(packageKey, packageData, onUploadProgress);
+		} finally {
+			onFinishUpload();
+		}
 	}
 
 	/**

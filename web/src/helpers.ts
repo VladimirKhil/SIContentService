@@ -4,8 +4,13 @@ import * as Rusha from 'rusha';
  * @param data Input data.
  */
 export function encodeBase64(data: ArrayBuffer) : string {
-	const buffer = Buffer.from(data);
-	return buffer.toString('base64');
+	if (typeof Buffer !== 'undefined') {	
+		const buffer = Buffer.from(data);
+		return buffer.toString('base64');
+	}
+
+	const hashArray = new Uint8Array(data);
+	return window.btoa(String.fromCharCode.apply(null, hashArray as unknown as number[]));
 }
 
 /** Hashes data.

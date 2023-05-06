@@ -82,9 +82,9 @@ test('Upload package if not exists', async () => {
 	const packageName = `test_${Math.random()}`;
 	const packageData = new Blob([randomPackage]);
 
-	const packageUri = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {});
+	const packageUri = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {}, () => {}, () => {});
 	expect(packageUri).not.toBeNull();
 
-	const packageUri2 = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {});
+	const packageUri2 = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {}, () => {}, () => {});
 	expect(packageUri2).toBe(packageUri);
 });

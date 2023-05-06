@@ -23,5 +23,5 @@ export async function hashDataAsync(data: ArrayBuffer): Promise<ArrayBuffer> {
  * @param base64value Base64 string.
  */
 export function escapeBase64(base64value: string): string {
-	return base64value.replace('/', '_').replace('+', '-').replace('=', '');
+	return base64value.replaceAll('/', '_').replaceAll('+', '-').replaceAll('=', '');
 }

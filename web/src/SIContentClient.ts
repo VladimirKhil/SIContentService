@@ -119,7 +119,7 @@ export default class SIContentClient {
 	 * @param packageData Package data.
 	 * @param onProgress Progress callback.
 	 */
-	async uploadPackageIfNoExistAsync(
+	async uploadPackageIfNotExistAsync(
 		packageName: string,
 		packageData: Blob,
 		onProgress: (progress: number) => void) {
@@ -142,7 +142,7 @@ export default class SIContentClient {
 	 * @param avatarName Avatar name.
 	 * @param avatarData Avatar data.
 	 */
-	async uploadAvatarIfNoExistAsync(avatarName: string, avatarData: Blob) {
+	async uploadAvatarIfNotExistAsync(avatarName: string, avatarData: Blob) {
 		const avatarKey: FileKey = {
 			name: avatarName,
 			hash: encodeBase64(await hashDataAsync(await avatarData.arrayBuffer()))

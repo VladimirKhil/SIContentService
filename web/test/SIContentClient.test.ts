@@ -30,14 +30,23 @@ test('Upload avatar', async () => {
 	expect(avatarUri).not.toBeNull();
 
 	const avatarUri2 = await siContentClient.tryGetAvatarUriAsync(avatarKey);
-
 	expect(avatarUri2).toBe(avatarUri);
 
-	if (TEST_NGINX) {
-		const avatarData = await siContentClient.getAsync(avatarUri);
-		const avatarBuffer = Buffer.from(await avatarData.arrayBuffer());
-		expect(avatarBuffer).toBe(randomValues);
-	}
+	const avatarData2 = await siContentClient.getAsync(avatarUri);
+	const avatarBuffer = Buffer.from(await avatarData2.arrayBuffer());
+	expect(avatarBuffer).toEqual(randomValues);
+});
+
+test('Upload avatar if does not exist', async () => {
+	const randomValues = randomBytes(20);
+	const avatarName =`test_${Math.random()}.jpg`;
+	const avatarData = new Blob([randomValues]);	
+
+	const avatarUri = await siContentClient.uploadAvatarIfNotExistAsync(avatarName, avatarData);
+	expect(avatarUri).not.toBeNull();
+
+	const avatarUri2 = await siContentClient.uploadAvatarIfNotExistAsync(avatarName, avatarData);
+	expect(avatarUri2).toBe(avatarUri);
 });
 
 test('Upload package', async () => {
@@ -60,10 +69,22 @@ test('Upload package', async () => {
 
 	expect(packageUri2).toBe(packageUri);
 
-	if (TEST_NGINX) {
-		const imageData = await siContentClient.getAsync(`${packageUri}/Images/294F815D5DB6E7F7.PNG`);
-		expect(imageData).not.toBeNull();
+	const imageData = await siContentClient.getAsync(`${packageUri}/Images/294F815D5DB6E7F7.PNG`);
+	expect(imageData).not.toBeNull();
 
+	if (TEST_NGINX) {
 		expect(await siContentClient.getAsync(`${packageUri}/content.xml`)).toThrow();
 	}
+});
+
+test('Upload package if not exists', async () => {
+	const randomPackage = Buffer.from(PACKAGE_DATA, 'base64');
+	const packageName = `test_${Math.random()}`;
+	const packageData = new Blob([randomPackage]);
+
+	const packageUri = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {});
+	expect(packageUri).not.toBeNull();
+
+	const packageUri2 = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {});
+	expect(packageUri2).toBe(packageUri);
 });

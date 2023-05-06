@@ -60,7 +60,7 @@ spec:
             - name: SIContentService__MaxPackageSizeMb
               value: '{{ .Values.options.maxPackageSizeMb }}'
             - name: SIContentService__MaxAvatarSizeMb
-              value: '{{ .Values.options.maxAvatarizeMb }}'
+              value: '{{ .Values.options.maxAvatarSizeMb }}'
             - name: SIContentService__MinDriveFreeSpaceMb
               value: '{{ .Values.options.minDriveFreeSpaceMb }}'
             - name: SIContentService__MinDriveCriticalSpaceMb

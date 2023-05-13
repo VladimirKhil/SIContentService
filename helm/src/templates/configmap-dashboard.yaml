@@ -7,4 +7,4 @@ metadata:
     {{ .Values.dashboardLabels | toYaml | nindent 4 }}
   {{- end }}
 data:
-  dashboard.json: {{ $.Files.Get "dashboards/dashboard.json" | toJson }}
+  dashboard.json: {{ .Files.Get "dashboards/dashboard.json" | toJson }}

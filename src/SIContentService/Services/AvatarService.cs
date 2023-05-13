@@ -2,6 +2,7 @@
 using SIContentService.Configuration;
 using SIContentService.Contracts;
 using SIContentService.Helpers;
+using SIContentService.Metrics;
 using SIContentService.Models;
 using System.Text.Json;
 
@@ -13,6 +14,7 @@ public sealed class AvatarService : IAvatarService
     private const string InfoFolderName = ".info";
 
     private readonly SIContentServiceOptions _options;
+    private readonly OtelMetrics _metrics;
     private readonly ILogger<PackageService> _logger;
     private readonly string _rootFolder;
 
@@ -20,9 +22,11 @@ public sealed class AvatarService : IAvatarService
 
     public AvatarService(
         IOptions<SIContentServiceOptions> options,
+        OtelMetrics metrics,
         ILogger<PackageService> logger)
     {
         _options = options.Value;
+        _metrics = metrics;
         _logger = logger;
 
         _rootFolder = Path.Combine(StringHelper.BuildRootedPath(options.Value.ContentFolder), "avatars");
@@ -50,6 +54,8 @@ public sealed class AvatarService : IAvatarService
                 // Do not remove await because fs would be disposed after return
                 await fileWriteAsync(fs);
             });
+
+        _metrics.AddAvatar();
 
         return avatarPath;
     }

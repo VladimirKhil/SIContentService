@@ -1,28 +1,20 @@
 using AspNetCoreRateLimit;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using Serilog;
 using SIContentService.Configuration;
 using SIContentService.Contracts;
 using SIContentService.Helpers;
+using SIContentService.Metrics;
 using SIContentService.Middlewares;
 using SIContentService.Services;
 using SIContentService.Services.Background;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, lc) => lc
-#if !DEBUG
-    .WriteTo.Console()
-    .WriteTo.File(
-        "logs/sicontent.log",
-        fileSizeLimitBytes: 5 * 1024 * 1024,
-        shared: true,
-        rollOnFileSizeLimit: true,
-        retainedFileCountLimit: 5,
-        flushToDiskInterval: TimeSpan.FromSeconds(1))
-#endif
-    .ReadFrom.Configuration(ctx.Configuration)); // Not working when Assembly is trimmed
+builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
 
 ConfigureServices(builder.Services, builder.Configuration);
 
@@ -47,6 +39,7 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddHostedService<CleanerService>();
 
     AddRateLimits(services, configuration);
+    AddMetrics(services);
 }
 
 static void Configure(WebApplication app)
@@ -66,6 +59,8 @@ static void Configure(WebApplication app)
     app.MapControllers();
 
     app.UseIpRateLimiting();
+
+    app.UseOpenTelemetryPrometheusScrapingEndpoint();
 }
 
 static void AddRateLimits(IServiceCollection services, IConfiguration configuration)
@@ -75,4 +70,20 @@ static void AddRateLimits(IServiceCollection services, IConfiguration configurat
     services.AddMemoryCache();
     services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
     services.AddInMemoryRateLimiting();
+}
+
+static void AddMetrics(IServiceCollection services)
+{
+    var meters = new OtelMetrics();
+
+    services.AddOpenTelemetry().WithMetrics(builder =>
+        builder
+            .ConfigureResource(rb => rb.AddService("SIContent"))
+            .AddMeter(meters.MeterName)
+            .AddAspNetCoreInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddProcessInstrumentation()
+            .AddPrometheusExporter());
+
+    services.AddSingleton(meters);
 }

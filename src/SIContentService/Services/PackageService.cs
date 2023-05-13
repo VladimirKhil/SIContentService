@@ -4,6 +4,7 @@ using SIContentService.Contract.Models;
 using SIContentService.Contracts;
 using SIContentService.Exceptions;
 using SIContentService.Helpers;
+using SIContentService.Metrics;
 using SIContentService.Models;
 using System.Net;
 using System.Text.Json;
@@ -21,18 +22,21 @@ public sealed class PackageService : IPackageService
 
     private readonly IStorageService _storageService;
     private readonly SIContentServiceOptions _options;
+    private readonly OtelMetrics _metrics;
     private readonly ILogger<PackageService> _logger;
     private readonly string _rootFolder;
 
     private readonly ExtractionOptions _extractionOptions;
 
-public PackageService(
+    public PackageService(
         IStorageService storageService,
-        IOptions<SIContentServiceOptions> options, 
+        IOptions<SIContentServiceOptions> options,
+        OtelMetrics metrics,
         ILogger<PackageService> logger)
     {
         _storageService = storageService;
         _options = options.Value;
+        _metrics = metrics;
         _logger = logger;
 
         _rootFolder = Path.Combine(StringHelper.BuildRootedPath(options.Value.ContentFolder), "packages");
@@ -67,6 +71,8 @@ public PackageService(
                 extractedFilePath,
                 () => ExtractPackageAsync(filePath, extractedFilePath, cancellationToken),
                 cancellationToken);
+
+            _metrics.AddPackage();
         }
 
         return extractedFilePath;

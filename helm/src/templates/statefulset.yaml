@@ -94,4 +94,3 @@ spec:
             subPath: nginx.conf
           resources:
             {{- toYaml .Values.nginxResources | nindent 12 }}
-            

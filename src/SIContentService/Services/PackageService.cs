@@ -139,6 +139,7 @@ public sealed class PackageService : IPackageService
                         try
                         {
                             dir.Delete(true);
+                            _metrics.DeletePackage();
                         }
                         catch (Exception exc)
                         {

@@ -26,6 +26,12 @@ public static partial class SecurityHelper
     public static string GetSafeExtension(string path)
     {
         var extension = Path.GetExtension(path);
+
+        if (string.IsNullOrEmpty(extension))
+        {
+            return "";
+        }
+
         var maxLength = Math.Min(ExtensionMaxLength, extension.Length - 1);
 
         return '.' + OnlyCharsAndDigitsRegex().Replace(extension.Substring(1, maxLength), "");

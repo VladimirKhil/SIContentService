@@ -134,6 +134,8 @@ public sealed class AvatarService : IAvatarService
                             {
                                 File.Delete(infoFile);
                             }
+
+                            _metrics.DeleteAvatar();
                         }
                         catch (Exception exc)
                         {

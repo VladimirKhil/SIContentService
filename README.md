@@ -22,7 +22,7 @@ There are reasons for using this service instead of regular CDN/S3 service:
 ## Docker
 
 
-    docker run -p 5000:5000 vladimirkhil/sicontentservice:1.0.11
+    docker run -p 5000:5000 vladimirkhil/sicontentservice:1.0.15
 
 
 ## Helm
@@ -30,7 +30,7 @@ There are reasons for using this service instead of regular CDN/S3 service:
 
     dependencies:
     - name: sicontent
-      version: "1.0.6"
+      version: "1.0.10"
       repository: "https://vladimirkhil.github.io/SIContentService/helm/repo"
 
 ### Parameters
@@ -39,7 +39,7 @@ There are reasons for using this service instead of regular CDN/S3 service:
 | ----------- | ----------- | ----------- |
 | `image.repository` | Image repository | `vladimirkhil/sicontentservice` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
-| `image.tag` | Image tag | `1.0.11` |
+| `image.tag` | Image tag | `1.0.15` |
 | `image.nginxTag` | Image Nginx tag | `alpine` |
 | `volumePath` | Path for storing data | ` ` |
 | `logPath` | Path for storing logs | ` ` |

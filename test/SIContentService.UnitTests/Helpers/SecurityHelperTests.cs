@@ -8,6 +8,7 @@ internal sealed class SecurityHelperTests
     [TestCase("a.verylongextension", ".very")]
     [TestCase("abc.e-*ffjj;;_p", ".ef")]
     [TestCase("a.p", ".p")]
+    [TestCase("test", "")]
     public void GetSafeExtension_Ok(string input, string output)
     {
         var result = SecurityHelper.GetSafeExtension(input);

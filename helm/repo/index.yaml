@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   sicontent:
   - apiVersion: v2
+    appVersion: 1.0.10
+    created: "2023-06-01T10:45:02.1765668+02:00"
+    description: A service for uploading and retrieving SIGame content
+    digest: 2034b59ef8ab4cf18167953a4930ebe5f496acefb4fb3148061faba63e7efb1d
+    name: sicontent
+    type: application
+    urls:
+    - sicontent-1.0.10.tgz
+    version: 1.0.10
+  - apiVersion: v2
     appVersion: 1.0.9
-    created: "2023-05-13T22:13:06.5742799+02:00"
+    created: "2023-06-01T10:45:02.2915169+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: a373cdca80f0a59f4f25fd622f5af0beef9a526e4bf2fdc5cfe052b008801908
     name: sicontent
@@ -13,7 +23,7 @@ entries:
     version: 1.0.9
   - apiVersion: v2
     appVersion: 1.0.8
-    created: "2023-05-13T22:13:06.5737281+02:00"
+    created: "2023-06-01T10:45:02.2758013+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: ac528a9637b6c059512bb6165fe6e7a9509688069e32239929939abd9c679d89
     name: sicontent
@@ -23,7 +33,7 @@ entries:
     version: 1.0.8
   - apiVersion: v2
     appVersion: 1.0.7
-    created: "2023-05-13T22:13:06.5726273+02:00"
+    created: "2023-06-01T10:45:02.2592082+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 1d9390547a1d1ac93493acb7b488a201af87bab941af3871b21f1e8ce9575289
     name: sicontent
@@ -33,7 +43,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: 1.0.6
-    created: "2023-05-13T22:13:06.571561+02:00"
+    created: "2023-06-01T10:45:02.2436138+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 21b249db3dcff7ed386768c4df96e12dc379dcf4667897f24d132109e6b87788
     name: sicontent
@@ -43,7 +53,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2023-05-13T22:13:06.5704543+02:00"
+    created: "2023-06-01T10:45:02.2272807+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: bb3f2cc2282ac8869b3c4fe32448d2cb5c54d6edd4bcfb98087c0292629f7ffb
     name: sicontent
@@ -53,7 +63,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.4
-    created: "2023-05-13T22:13:06.5699355+02:00"
+    created: "2023-06-01T10:45:02.2134658+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 5a6835bc08fed70e7cd4b5ca6ecf8a1456c85bf01cb90ee7390a0e4bfa7c50ac
     name: sicontent
@@ -63,7 +73,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.3
-    created: "2023-05-13T22:13:06.5688648+02:00"
+    created: "2023-06-01T10:45:02.2045383+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: dc8410f01ffd8a6b9fe3dd3a9b4852f2e3103635d408894730620f8f0be216f3
     name: sicontent
@@ -73,7 +83,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-05-13T22:13:06.5651115+02:00"
+    created: "2023-06-01T10:45:02.1913079+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 88020e878c513a44f224626d07c8a208a0bc44c4ce9fe2a370d8c72554b8a1db
     name: sicontent
@@ -83,7 +93,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2023-05-13T22:13:06.5640139+02:00"
+    created: "2023-06-01T10:45:02.1755231+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 347fea6aa24500d9d773bb29365c1451a427d1c7aea31e5a5e274c7bf96be3a3
     name: sicontent
@@ -93,7 +103,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-05-13T22:13:06.5634599+02:00"
+    created: "2023-06-01T10:45:02.1607252+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: a5cfb136e199b459d1a0404d329e3331ded50fda4473d86548984cd73add5f91
     name: sicontent
@@ -101,4 +111,4 @@ entries:
     urls:
     - sicontent-1.0.0.tgz
     version: 1.0.0
-generated: "2023-05-13T22:13:06.5612194+02:00"
+generated: "2023-06-01T10:45:02.1382778+02:00"

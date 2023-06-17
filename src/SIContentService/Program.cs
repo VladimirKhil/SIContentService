@@ -14,7 +14,9 @@ using SIContentService.Services.Background;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
+builder.Host.UseSerilog((ctx, lc) => lc
+    .ReadFrom.Configuration(ctx.Configuration)
+    .Filter.ByExcluding(logEvent => logEvent.Exception is BadHttpRequestException));
 
 ConfigureServices(builder.Services, builder.Configuration);
 

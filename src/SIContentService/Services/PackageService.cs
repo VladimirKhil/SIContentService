@@ -63,7 +63,7 @@ public sealed class PackageService : IPackageService
 
         if (Directory.Exists(extractedFilePath) && Directory.EnumerateFiles(extractedFilePath).Count() > 1)
         {
-            _logger.LogWarning("Folder {folder} already created! Package name: {packageName}", extractedFilePath, packageName);
+            _logger.LogWarning("Folder {folder} already created. Package name: {packageName}", extractedFilePath, packageName);
         }
         else
         {
@@ -211,29 +211,34 @@ public sealed class PackageService : IPackageService
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
+            DeleteFolder(extractedFilePath);
             throw;
         }
         catch (Exception exc)
         {
             _logger.LogWarning(exc, "ExtractPackageAsync error: {error}", exc.Message);
-
-            try
-            {
-                Directory.Delete(extractedFilePath, true);
-            }
-            catch (Exception exc2)
-            {
-                _logger.LogWarning(
-                    exc,
-                    "ExtractPackageAsync clear directory {directory} error: {error}",
-                    extractedFilePath,
-                    exc2.Message);
-            }
+            DeleteFolder(extractedFilePath);
 
             throw new ServiceException(
                 WellKnownSIContentServiceErrorCode.BadPackageFile,
                 HttpStatusCode.BadRequest,
                 exc);
+        }
+    }
+
+    private void DeleteFolder(string extractedFilePath)
+    {
+        try
+        {
+            Directory.Delete(extractedFilePath, true);
+        }
+        catch (Exception exc)
+        {
+            _logger.LogWarning(
+                exc,
+                "ExtractPackageAsync clear directory {directory} error: {error}",
+                extractedFilePath,
+                exc.Message);
         }
     }
 

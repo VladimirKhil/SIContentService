@@ -15,7 +15,7 @@ public sealed class AvatarService : IAvatarService
 
     private readonly SIContentServiceOptions _options;
     private readonly OtelMetrics _metrics;
-    private readonly ILogger<PackageService> _logger;
+    private readonly ILogger<AvatarService> _logger;
     private readonly string _rootFolder;
 
     private readonly CollectionLocker _locker = new();
@@ -23,7 +23,7 @@ public sealed class AvatarService : IAvatarService
     public AvatarService(
         IOptions<SIContentServiceOptions> options,
         OtelMetrics metrics,
-        ILogger<PackageService> logger)
+        ILogger<AvatarService> logger)
     {
         _options = options.Value;
         _metrics = metrics;

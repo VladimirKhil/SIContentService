@@ -12,7 +12,7 @@ public interface IPackageService
     /// <param name="packageName">Package name.</param>
     /// <param name="packageHashString">Package hash.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task<string> ImportUserPackageAsync(
+    Task<(bool success, string filePath)> ImportUserPackageAsync(
         string filePath,
         string packageName,
         string packageHashString,

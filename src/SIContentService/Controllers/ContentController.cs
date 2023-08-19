@@ -11,6 +11,7 @@ using SIContentService.Contracts;
 using SIContentService.Exceptions;
 using SIContentService.Helpers;
 using System.Net;
+using System.Text;
 
 namespace SIContentService.Controllers;
 
@@ -241,11 +242,21 @@ public sealed class ContentController : ControllerBase
             var packageHashString = (md5Headers.Count > 0 ? md5Headers[0] : fileName)
                 ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
 
-            return await _packageService.ImportUserPackageAsync(
+            var escapedHash = Base64Helper.EscapeBase64(packageHashString);
+
+            var (success, filePath) = await _packageService.ImportUserPackageAsync(
                 targetFilePath,
                 packageName,
-                Base64Helper.EscapeBase64(packageHashString),
+                escapedHash,
                 cancellationToken);
+
+            if (!success)
+            {
+                var packageData = $"{escapedHash} {packageName}";
+                Response.Headers.Add("Not-Created", Convert.ToBase64String(Encoding.UTF8.GetBytes(packageData)));
+            }
+
+            return filePath;
         }
         finally
         {

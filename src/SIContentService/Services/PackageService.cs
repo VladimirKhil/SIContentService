@@ -48,34 +48,33 @@ public sealed class PackageService : IPackageService
         };
     }
 
-    public async Task<string> ImportUserPackageAsync(
+    public async Task<(bool, string)> ImportUserPackageAsync(
         string filePath,
         string packageName,
         string packageHashString,
         CancellationToken cancellationToken = default)
     {
+        var extractedFilePath = BuildPackagePath(packageName, packageHashString);
+
+        if (Directory.Exists(extractedFilePath) && Directory.EnumerateFiles(extractedFilePath).Skip(1).Any()) // Count > 1
+        {
+            _logger.LogInformation("Folder {folder} already created. Package name: {packageName}", extractedFilePath, packageName);
+            return (false, extractedFilePath);
+        }
+
         if (!_storageService.CheckFreeSpace())
         {
             throw new ServiceException(WellKnownSIContentServiceErrorCode.StorageFull, HttpStatusCode.InsufficientStorage);
         }
 
-        var extractedFilePath = BuildPackagePath(packageName, packageHashString);
+        await _locker.DoAsync(
+            extractedFilePath,
+            () => ExtractPackageAsync(filePath, extractedFilePath, cancellationToken),
+            cancellationToken);
 
-        if (Directory.Exists(extractedFilePath) && Directory.EnumerateFiles(extractedFilePath).Count() > 1)
-        {
-            _logger.LogWarning("Folder {folder} already created. Package name: {packageName}", extractedFilePath, packageName);
-        }
-        else
-        {
-            await _locker.DoAsync(
-                extractedFilePath,
-                () => ExtractPackageAsync(filePath, extractedFilePath, cancellationToken),
-                cancellationToken);
+        _metrics.AddPackage();
 
-            _metrics.AddPackage();
-        }
-
-        return extractedFilePath;
+        return (true, extractedFilePath);
     }
 
     public Task<string?> TryGetPackagePathAsync(string packageName, string packageHashString, CancellationToken cancellationToken = default)

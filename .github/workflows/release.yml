@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  release:
+    types:
+      - created
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: '1.0.0'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      
+    - name: Set image tag
+      run: |
+        TAG=${{ github.event.release.tag_name || github.event.inputs.version }}
+        echo "IMAGE_TAG=${TAG#v}" >> $GITHUB_ENV
+        
+    - name: Build the Docker image
+      run: |
+        echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin docker.io
+        docker build . --file src/SIContentService/Dockerfile --tag ${{ secrets.DOCKER_HUB_REPOSITORY }}:$IMAGE_TAG
+        docker push ${{ secrets.DOCKER_HUB_REPOSITORY }}:$IMAGE_TAG

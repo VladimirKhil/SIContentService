@@ -38,6 +38,7 @@ logPath: ''
 nginxLogPath: ''
 
 maxUploadSize: '101m'
+bodyBufferSize: '10m'
 
 options:
   maxPackageSizeMb: 100

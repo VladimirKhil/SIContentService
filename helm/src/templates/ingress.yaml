@@ -9,6 +9,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /api/$2
     nginx.ingress.kubernetes.io/proxy-body-size: '{{ .Values.maxUploadSize }}'
+    nginx.ingress.kubernetes.io/client-body-buffer-size: '{{ .Values.bodyBufferSize }}' # for uploading large files
     {{- if .Values.ingress.annotations -}}
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
     {{- end }}

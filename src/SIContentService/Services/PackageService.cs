@@ -199,7 +199,8 @@ public sealed class PackageService : IPackageService
                 _extractionOptions,
                 cancellationToken);
 
-            File.WriteAllLines(Path.Combine(extractedFilePath, "files.txt"), extractedFiles);
+            File.WriteAllLines(Path.Combine(extractedFilePath, "files.txt"), extractedFiles.Values); // legacy
+            File.WriteAllLines(Path.Combine(extractedFilePath, "filesMap.txt"), extractedFiles.Select(f => $"{f.Key}:{f.Value}"));
         }
         catch (InvalidDataException exc)
         {
@@ -258,7 +259,7 @@ public sealed class PackageService : IPackageService
 
         return folderName switch
         {
-            "Images" or "Audio" or "Video" or "Texts" => true,
+            "Images" or "Audio" or "Video" or "Html" or "Texts" => true,
             _ => false
         };
     }

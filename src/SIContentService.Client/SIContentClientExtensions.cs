@@ -40,7 +40,6 @@ public static class SIContentClientExtensions
                 }
                 
                 client.DefaultRequestVersion = HttpVersion.Version20;
-                
             })
             .AddPolicyHandler(
                 HttpPolicyExtensions

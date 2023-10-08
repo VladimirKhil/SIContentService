@@ -131,49 +131,57 @@ public sealed class ContentController : ControllerBase
     [RequestSizeLimit(MaxAvatarSizeBytes)]
     public async Task<IActionResult> UploadAvatar(CancellationToken cancellationToken = default)
     {
-        var files = Request.Form.Files;
-
-        if (files.Count == 0)
+        try
         {
-            throw new ServiceException(WellKnownSIContentServiceErrorCode.FileEmpty, HttpStatusCode.BadRequest);
+            var files = Request.Form.Files;
+
+            if (files.Count == 0)
+            {
+                throw new ServiceException(WellKnownSIContentServiceErrorCode.FileEmpty, HttpStatusCode.BadRequest);
+            }
+
+            var file = files[0];
+
+            if (file == null || file.Length == 0)
+            {
+                throw new ServiceException(WellKnownSIContentServiceErrorCode.FileEmpty, HttpStatusCode.BadRequest);
+            }
+
+            if (!_storageService.CheckFreeSpace())
+            {
+                throw new ServiceException(WellKnownSIContentServiceErrorCode.StorageFull, HttpStatusCode.InsufficientStorage);
+            }
+
+            var avatarName = StringHelper.UnquoteValue(file.FileName);
+
+            if (file.Length > _options.MaxAvatarSizeMb * 1024 * 1024)
+            {
+                throw new ServiceException(
+                    WellKnownSIContentServiceErrorCode.FileTooLarge,
+                    HttpStatusCode.RequestEntityTooLarge,
+                    new Dictionary<string, object>
+                    {
+                        ["maxSizeMb"] = _options.MaxAvatarSizeMb
+                    });
+            }
+
+            var md5Headers = Request.Headers.ContentMD5;
+
+            var avatarHashString = (md5Headers.Count > 0 ? md5Headers[0] : file.Name)
+                ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
+
+            var avatarPath = await _avatarService.AddAvatarAsync(
+                avatarName,
+                Base64Helper.EscapeBase64(avatarHashString),
+                stream => file.CopyToAsync(stream, cancellationToken));
+
+            return Ok($"/avatars/{Path.GetFileName(avatarPath)}");
         }
-
-        var file = files[0];
-
-        if (file == null || file.Length == 0)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            throw new ServiceException(WellKnownSIContentServiceErrorCode.FileEmpty, HttpStatusCode.BadRequest);
+            // No action
+            return Accepted();
         }
-
-        if (!_storageService.CheckFreeSpace())
-        {
-            throw new ServiceException(WellKnownSIContentServiceErrorCode.StorageFull, HttpStatusCode.InsufficientStorage);
-        }
-
-        string avatarName = StringHelper.UnquoteValue(file.FileName);
-
-        if (file.Length > _options.MaxAvatarSizeMb * 1024 * 1024)
-        {
-            throw new ServiceException(
-                WellKnownSIContentServiceErrorCode.FileTooLarge,
-                HttpStatusCode.RequestEntityTooLarge,
-                new Dictionary<string, object>
-                {
-                    ["maxSizeMb"] = _options.MaxAvatarSizeMb
-                });
-        }
-
-        var md5Headers = Request.Headers.ContentMD5;
-
-        var avatarHashString = (md5Headers.Count > 0 ? md5Headers[0] : file.Name)
-            ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
-        
-        var avatarPath = await _avatarService.AddAvatarAsync(
-            avatarName,
-            Base64Helper.EscapeBase64(avatarHashString),
-            stream => file.CopyToAsync(stream, cancellationToken));
-
-        return Ok($"/avatars/{Path.GetFileName(avatarPath)}");
     }
 
     [HttpGet("avatars/{avatarHash}/{avatarName}")]

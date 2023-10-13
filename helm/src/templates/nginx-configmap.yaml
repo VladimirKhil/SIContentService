@@ -10,7 +10,7 @@ data:
     worker_rlimit_nofile 131072; # added
 
     error_log  stderr error; # updated (notice)
-    pid        /var/run/nginx.pid;
+    pid        /tmp/nginx.pid;
 
     events {
         use epoll;
@@ -19,6 +19,12 @@ data:
     }
 
     http {
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+        
         include       /etc/nginx/mime.types;
         default_type  application/octet-stream;
         log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '

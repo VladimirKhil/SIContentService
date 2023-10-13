@@ -2,5 +2,5 @@ apiVersion: v2
 name: sicontent
 description: A service for uploading and retrieving SIGame content
 type: application
-version: 1.0.15
-appVersion: 1.0.15
+version: 1.0.16
+appVersion: 1.0.16

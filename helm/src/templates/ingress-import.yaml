@@ -3,13 +3,15 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ $fullName }}-import
   labels:
     {{- include "sicontent.labels" . | nindent 4 }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /api/v1/content/$2
-    nginx.ingress.kubernetes.io/proxy-body-size: '{{ .Values.maxUploadSize }}'
-    nginx.ingress.kubernetes.io/client-body-buffer-size: '{{ .Values.bodyBufferSize }}' # for uploading large files
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret-type: auth-map
+    nginx.ingress.kubernetes.io/auth-secret: {{ include "sicontent.fullname" . }}-secret
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+    nginx.ingress.kubernetes.io/rewrite-target: /api/v1/import/$2
     {{- if .Values.ingress.annotations -}}
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
     {{- end }}
@@ -30,7 +32,7 @@ spec:
     - http:
         paths:
           {{- range .paths }}
-          - path: {{ . }}/api/v1/content(/|$)(.*)
+          - path: {{ . }}/api/v1/import(/|$)(.*)
             pathType: Prefix
             backend:
               service:

@@ -24,7 +24,7 @@ public interface IPackageService
     /// <param name="packageName">Package name.</param>
     /// <param name="packageHashString">Package hash.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task<string?> TryGetPackagePathAsync(string packageName, string packageHashString, CancellationToken cancellationToken = default);
+    Task<string?> TryGetPackagePathAndUpdateUsageAsync(string packageName, string packageHashString, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Deletes old packages.

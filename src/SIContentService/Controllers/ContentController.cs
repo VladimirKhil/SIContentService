@@ -123,7 +123,7 @@ public sealed class ContentController : ControllerBase
     {
         var decodedName = Uri.UnescapeDataString(packageName);
 
-        var packagePath = await _packageService.TryGetPackagePathAsync(decodedName, packageHash, cancellationToken);
+        var packagePath = await _packageService.TryGetPackagePathAndUpdateUsageAsync(decodedName, packageHash, cancellationToken);
         return packagePath != null ? Ok($"/packages/{Path.GetFileName(packagePath)}") : NotFound();
     }
 
@@ -200,6 +200,15 @@ public sealed class ContentController : ControllerBase
         ContentDispositionHeaderValue contentDisposition,
         CancellationToken cancellationToken)
     {
+        var (packageName, escapedHash) = ReadAndValidatePackageMetadata(contentDisposition);
+
+        var packagePath = await _packageService.TryGetPackagePathAndUpdateUsageAsync(packageName, escapedHash, cancellationToken);
+
+        if (packagePath != null)
+        {
+            return packagePath;
+        }
+
         var targetFilePath = Path.GetTempFileName();
 
         try
@@ -209,48 +218,7 @@ public sealed class ContentController : ControllerBase
                 await fileStream.CopyToAsync(targetStream, cancellationToken);
             }
 
-            var maxPackageSizeFactor = _storageService.IsFreeSpaceCritical() ? 0.5 : 1;
-            var maxPackageSize = _options.MaxPackageSizeMb * 1024 * 1024 * maxPackageSizeFactor;
-
-            var fileLength = new FileInfo(targetFilePath).Length;
-
-            if (fileLength == 0)
-            {
-                throw new ServiceException(WellKnownSIContentServiceErrorCode.FileEmpty, HttpStatusCode.BadRequest);
-            }
-
-            if (fileLength > maxPackageSize)
-            {
-                throw new ServiceException(
-                    WellKnownSIContentServiceErrorCode.FileTooLarge,
-                    HttpStatusCode.RequestEntityTooLarge,
-                    new Dictionary<string, object>
-                    {
-                        ["maxSizeMb"] = maxPackageSize
-                    });
-            }
-
-            var md5Headers = Request.Headers.ContentMD5;
-            var fileNameValue = contentDisposition.Name.Value;
-            var packageNameValue = contentDisposition.FileName.Value;
-
-            if (fileNameValue == null)
-            {
-                throw new ServiceException(WellKnownSIContentServiceErrorCode.DispositionNameRequired, HttpStatusCode.BadRequest);
-            }
-
-            if (packageNameValue == null)
-            {
-                throw new ServiceException(WellKnownSIContentServiceErrorCode.DispositionFileNameRequired, HttpStatusCode.BadRequest);
-            }
-
-            var fileName = StringHelper.UnquoteValue(fileNameValue);
-            var packageName = StringHelper.UnquoteValue(packageNameValue);
-
-            var packageHashString = (md5Headers.Count > 0 ? md5Headers[0] : fileName)
-                ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
-
-            var escapedHash = Base64Helper.EscapeBase64(packageHashString);
+            _storageService.ValidatePackageFile(targetFilePath);
 
             var (success, filePath) = await _packageService.ImportUserPackageAsync(
                 targetFilePath,
@@ -280,5 +248,32 @@ public sealed class ContentController : ControllerBase
                 }
             }
         }
+    }
+
+    private (string packageName, string escapedHash) ReadAndValidatePackageMetadata(ContentDispositionHeaderValue contentDisposition)
+    {
+        var md5Headers = Request.Headers.ContentMD5;
+        var fileNameValue = contentDisposition.Name.Value;
+        var packageNameValue = contentDisposition.FileName.Value;
+
+        if (fileNameValue == null)
+        {
+            throw new ServiceException(WellKnownSIContentServiceErrorCode.DispositionNameRequired, HttpStatusCode.BadRequest);
+        }
+
+        if (packageNameValue == null)
+        {
+            throw new ServiceException(WellKnownSIContentServiceErrorCode.DispositionFileNameRequired, HttpStatusCode.BadRequest);
+        }
+
+        var fileName = StringHelper.UnquoteValue(fileNameValue);
+        var packageName = StringHelper.UnquoteValue(packageNameValue);
+
+        var packageHashString = (md5Headers.Count > 0 ? md5Headers[0] : fileName)
+            ?? throw new ServiceException(WellKnownSIContentServiceErrorCode.ContentMD5HeaderRequired, HttpStatusCode.BadRequest);
+
+        var escapedHash = Base64Helper.EscapeBase64(packageHashString);
+
+        return (packageName, escapedHash);
     }
 }

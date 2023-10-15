@@ -14,4 +14,10 @@ public interface IStorageService
     /// Checks if the remaing free space has a critical value.
     /// </summary>
     bool IsFreeSpaceCritical();
+
+    /// <summary>
+    /// Valides package file.
+    /// </summary>
+    /// <param name="filePath">Package file path.</param>
+    void ValidatePackageFile(string filePath);
 }

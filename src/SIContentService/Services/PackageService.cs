@@ -20,7 +20,6 @@ public sealed class PackageService : IPackageService
 
     private readonly CollectionLocker _locker = new();
 
-    private readonly IStorageService _storageService;
     private readonly SIContentServiceOptions _options;
     private readonly OtelMetrics _metrics;
     private readonly ILogger<PackageService> _logger;
@@ -29,12 +28,10 @@ public sealed class PackageService : IPackageService
     private readonly ExtractionOptions _extractionOptions;
 
     public PackageService(
-        IStorageService storageService,
         IOptions<SIContentServiceOptions> options,
         OtelMetrics metrics,
         ILogger<PackageService> logger)
     {
-        _storageService = storageService;
         _options = options.Value;
         _metrics = metrics;
         _logger = logger;
@@ -56,15 +53,10 @@ public sealed class PackageService : IPackageService
     {
         var extractedFilePath = BuildPackagePath(packageName, packageHashString);
 
-        if (Directory.Exists(extractedFilePath) && Directory.EnumerateFiles(extractedFilePath).Skip(1).Any()) // Count > 1
+        if (PackagePathExists(extractedFilePath))
         {
             _logger.LogInformation("Folder {folder} already created. Package name: {packageName}", extractedFilePath, packageName);
             return (false, extractedFilePath);
-        }
-
-        if (!_storageService.CheckFreeSpace())
-        {
-            throw new ServiceException(WellKnownSIContentServiceErrorCode.StorageFull, HttpStatusCode.InsufficientStorage);
         }
 
         await _locker.DoAsync(
@@ -77,7 +69,10 @@ public sealed class PackageService : IPackageService
         return (true, extractedFilePath);
     }
 
-    public Task<string?> TryGetPackagePathAsync(string packageName, string packageHashString, CancellationToken cancellationToken = default)
+    public Task<string?> TryGetPackagePathAndUpdateUsageAsync(
+        string packageName,
+        string packageHashString,
+        CancellationToken cancellationToken = default)
     {
         var packagePath = BuildPackagePath(packageName, packageHashString);
         return UpdatePackageUsageAsync(packagePath, cancellationToken);
@@ -157,12 +152,15 @@ public sealed class PackageService : IPackageService
     private string BuildPackagePath(string packageName, string packageHashString) =>
         Path.Combine(_rootFolder, $"{packageHashString.HashString()}_{packageName.HashString()}");
 
+    private static bool PackagePathExists(string packagePath) =>
+        Directory.Exists(packagePath) && Directory.EnumerateFiles(packagePath).Any(name => name != InfoFileName);
+
     private Task<string?> UpdatePackageUsageAsync(string packagePath, CancellationToken cancellationToken) =>
         _locker.DoWithLockAsync(
             packagePath,
             () =>
             {
-                if (!Directory.Exists(packagePath) || Directory.EnumerateFiles(packagePath).All(name => name == InfoFileName))
+                if (!PackagePathExists(packagePath))
                 {
                     return null;
                 }
@@ -199,8 +197,8 @@ public sealed class PackageService : IPackageService
                 _extractionOptions,
                 cancellationToken);
 
-            File.WriteAllLines(Path.Combine(extractedFilePath, "files.txt"), extractedFiles.Values); // legacy
-            File.WriteAllLines(Path.Combine(extractedFilePath, "filesMap.txt"), extractedFiles.Select(f => $"{f.Key}:{f.Value}"));
+            File.WriteAllLines(Path.Combine(extractedFilePath, "files.txt"), extractedFiles.Values.Select(v => v.Name)); // legacy
+            File.WriteAllLines(Path.Combine(extractedFilePath, "filesMap.txt"), extractedFiles.Select(f => $"{f.Key}:{f.Value.Name}:{f.Value.Size}"));
         }
         catch (InvalidDataException exc)
         {

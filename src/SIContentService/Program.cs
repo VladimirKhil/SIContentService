@@ -38,6 +38,8 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddSingleton<IPackageService, PackageService>();
     services.AddSingleton<IAvatarService, AvatarService>();
 
+    services.AddHttpClient<IResourceDownloader, ResourceDownloader>();
+
     services.AddHostedService<CleanerService>();
 
     AddRateLimits(services, configuration);

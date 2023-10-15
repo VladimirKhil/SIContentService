@@ -1,8 +1,11 @@
 ﻿using EnsureThat;
 using Microsoft.Extensions.Options;
 using SIContentService.Configuration;
+using SIContentService.Contract.Models;
 using SIContentService.Contracts;
+using SIContentService.Exceptions;
 using SIContentService.Helpers;
+using System.Net;
 
 namespace SIContentService.Services;
 
@@ -34,5 +37,29 @@ internal sealed class StorageService : IStorageService
     {
         var freeSpace = new DriveInfo(_storageRoot).TotalFreeSpace;
         return freeSpace < ((long)_options.MinDriveFreeSpaceMb + (long)_options.MinDriveCriticalSpaceMb) * 1024 * 1024;
+    }
+
+    public void ValidatePackageFile(string filePath)
+    {
+        var maxPackageSizeFactor = IsFreeSpaceCritical() ? 0.5 : 1;
+        var maxPackageSize = _options.MaxPackageSizeMb * 1024 * 1024 * maxPackageSizeFactor;
+
+        var fileLength = new FileInfo(filePath).Length;
+
+        if (fileLength == 0)
+        {
+            throw new ServiceException(WellKnownSIContentServiceErrorCode.FileEmpty, HttpStatusCode.BadRequest);
+        }
+
+        if (fileLength > maxPackageSize)
+        {
+            throw new ServiceException(
+                WellKnownSIContentServiceErrorCode.FileTooLarge,
+                HttpStatusCode.RequestEntityTooLarge,
+                new Dictionary<string, object>
+                {
+                    ["maxSizeMb"] = maxPackageSize
+                });
+        }
     }
 }

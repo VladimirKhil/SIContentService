@@ -1,9 +1,9 @@
-﻿using SIContentService.Client.Properties;
+﻿using SIContentService.Client.Helpers;
+using SIContentService.Client.Properties;
 using SIContentService.Contract;
 using SIContentService.Contract.Helpers;
 using SIContentService.Contract.Models;
 using System.Net;
-using System.Text.Json;
 
 namespace SIContentService.Client;
 
@@ -11,18 +11,22 @@ namespace SIContentService.Client;
 internal sealed class SIContentServiceClient : ISIContentServiceClient
 {
     private const int BufferSize = 80 * 1024;
-    private const string RequestBodyTooLargeError = "Request body too large.";
-    private const string ApiPrefix = "api/v1/";
 
     private readonly HttpClient _client;
 
     public Uri? ServiceUri => _client.BaseAddress;
 
+    public IImportApi Import { get; }
+
     /// <summary>
     /// Initializes a new instance of <see cref="SIContentServiceClient" /> class.
     /// </summary>
     /// <param name="client">HTTP client to use.</param>
-    public SIContentServiceClient(HttpClient client) => _client = client;
+    public SIContentServiceClient(HttpClient client)
+    {
+        _client = client;
+        Import = new ImportApi(client);
+    }
 
     public async Task<Uri?> TryGetAvatarUriAsync(FileKey avatarKey, CancellationToken cancellationToken = default)
     {
@@ -33,7 +37,7 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
 
             return new Uri(
                 await _client.GetStringAsync(
-                    $"{ApiPrefix}content/avatars/{avatarHash}/{avatarName}",
+                    $"{HttpHelper.ApiPrefix}content/avatars/{avatarHash}/{avatarName}",
                     cancellationToken),
                 UriKind.RelativeOrAbsolute);
         }
@@ -52,7 +56,7 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
 
             return new Uri(
                 await _client.GetStringAsync(
-                    $"{ApiPrefix}content/packages/{packageHash}/{packageName}",
+                    $"{HttpHelper.ApiPrefix}content/packages/{packageHash}/{packageName}",
                     cancellationToken),
                 UriKind.RelativeOrAbsolute);
         }
@@ -63,10 +67,10 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
     }
 
     public Task<Uri> UploadAvatarAsync(FileKey avatarKey, Stream avatarStream, CancellationToken cancellationToken = default) =>
-        UploadContentAsync($"{ApiPrefix}content/avatars", avatarKey, avatarStream, cancellationToken);
+        UploadContentAsync($"{HttpHelper.ApiPrefix}content/avatars", avatarKey, avatarStream, cancellationToken);
 
     public Task<Uri> UploadPackageAsync(FileKey packageKey, Stream packageStream, CancellationToken cancellationToken = default) =>
-        UploadContentAsync($"{ApiPrefix}content/packages", packageKey, packageStream, cancellationToken);
+        UploadContentAsync($"{HttpHelper.ApiPrefix}content/packages", packageKey, packageStream, cancellationToken);
 
     public Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken = default) =>
         _client.GetAsync(RemoveLeadingSlash(requestUri), cancellationToken);
@@ -95,7 +99,7 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorMessage = await GetErrorMessageAsync(response, cancellationToken);
+                var errorMessage = await HttpHelper.GetErrorMessageAsync(response, cancellationToken);
                 throw new Exception(errorMessage);
             }
 
@@ -114,42 +118,5 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
 
             throw exc;
         }
-    }
-
-    private static async Task<string> GetErrorMessageAsync(HttpResponseMessage response, CancellationToken cancellationToken)
-    {
-        var serverError = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        if (response.StatusCode == HttpStatusCode.RequestEntityTooLarge
-            || response.StatusCode == HttpStatusCode.BadRequest && serverError == RequestBodyTooLargeError)
-        {
-            return Resources.FileTooLarge;
-        }
-
-        if (response.StatusCode == HttpStatusCode.BadGateway)
-        {
-            return $"{response.StatusCode}: Bad Gateway";
-        }
-
-        if (response.StatusCode == HttpStatusCode.TooManyRequests)
-        {
-            return $"{response.StatusCode}: Too many requests. Try again later";
-        }
-
-        try
-        {
-            var error = JsonSerializer.Deserialize<SIContentServiceError>(serverError);
-
-            if (error != null)
-            {
-                return error.ErrorCode.ToString();
-            }
-        }
-        catch // Invalid JSON or wrong type
-        {
-
-        }
-
-        return $"{response.StatusCode}: {serverError}";
     }
 }

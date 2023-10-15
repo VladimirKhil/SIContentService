@@ -13,6 +13,11 @@ public interface ISIContentServiceClient : IDisposable
     Uri? ServiceUri { get; }
 
     /// <summary>
+    /// API for importing external packages.
+    /// </summary>
+    IImportApi Import { get; }
+
+    /// <summary>
     /// Gets package public uri.
     /// </summary>
     /// <param name="packageKey">Unqiue package key.</param>

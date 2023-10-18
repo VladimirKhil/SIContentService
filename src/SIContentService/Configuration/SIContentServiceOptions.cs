@@ -51,4 +51,9 @@ public sealed class SIContentServiceOptions
     /// Should the service serve static content by itself.
     /// </summary>
     public bool ServeStaticFiles { get; set; } = true;
+
+    /// <summary>
+    /// File operations buffer size.
+    /// </summary>
+    public int BufferSize { get; set; } = 81_920;
 }

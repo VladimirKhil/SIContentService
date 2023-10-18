@@ -213,9 +213,9 @@ public sealed class ContentController : ControllerBase
 
         try
         {
-            using (var targetStream = System.IO.File.Create(targetFilePath))
+            using (var targetStream = System.IO.File.Create(targetFilePath, _options.BufferSize, FileOptions.Asynchronous))
             {
-                await fileStream.CopyToAsync(targetStream, cancellationToken);
+                await fileStream.CopyToAsync(targetStream, _options.BufferSize, cancellationToken);
             }
 
             _storageService.ValidatePackageFile(targetFilePath);

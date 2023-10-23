@@ -23,10 +23,12 @@ service:
   port: 5000
   targetPort: 5000
   nginxPort: 80
-  nginxTargetPort: 80
+  nginxTargetPort: 8080
 
 ingress:
   enabled: false
+  className: nginx
+  pathType: Prefix
   clientSecret: ''
   hosts: []
   tls: []

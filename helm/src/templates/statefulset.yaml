@@ -104,11 +104,11 @@ spec:
           resources:
             {{- toYaml .Values.nginxResources | nindent 12 }}
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.service.nginxTargetPort }}
         - name: nginx-prometheus-exporter
           image: nginx/nginx-prometheus-exporter:{{ .Values.nginxPrometheusExporter.tag }}
           args:
-            - '-nginx.scrape-uri=http://localhost/metrics'
+            - '-nginx.scrape-uri=http://localhost:{{ .Values.service.nginxTargetPort }}/metrics'
           resources:
             limits:
               memory: 128Mi

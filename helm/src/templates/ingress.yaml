@@ -14,7 +14,7 @@ metadata:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
     {{- end }}
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: {{ .Values.ingress.className }}
   {{- if .Values.ingress.tls }}
   tls:
     {{- range .Values.ingress.tls }}
@@ -31,7 +31,7 @@ spec:
         paths:
           {{- range .paths }}
           - path: {{ . }}/api/v1/content(/|$)(.*)
-            pathType: Prefix
+            pathType: {{ .Values.ingress.pathType }}
             backend:
               service:
                 name: {{ $fullName }}
@@ -39,4 +39,4 @@ spec:
                   name: http
           {{- end }}
     {{- end }}
-  {{- end }}
+{{- end }}

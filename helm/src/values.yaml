@@ -28,7 +28,7 @@ service:
 ingress:
   enabled: false
   className: nginx
-  pathType: Prefix
+  pathType: ImplementationSpecific
   clientSecret: ''
   hosts: []
   tls: []

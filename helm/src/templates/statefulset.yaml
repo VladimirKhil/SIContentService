@@ -110,8 +110,6 @@ spec:
           args:
             - '-nginx.scrape-uri=http://localhost:{{ .Values.service.nginxTargetPort }}/metrics'
           resources:
-            limits:
-              memory: 128Mi
-              cpu: 500m
+            {{- toYaml .Values.nginxPrometheusExporter.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.nginxPrometheusExporter.port }}

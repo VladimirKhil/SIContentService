@@ -13,7 +13,7 @@ internal sealed class SIContentServiceClientFactory : ISIContentServiceClientFac
 
     public ISIContentServiceClient CreateClient(Uri? serviceUri = null, string? clientSecret = null)
     {
-        var httpClient = _httpClientFactory.CreateClient(nameof(SIContentServiceClient));
+        var httpClient = _httpClientFactory.CreateClient(nameof(ISIContentServiceClient));
         
         if (serviceUri != null)
         {

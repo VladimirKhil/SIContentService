@@ -16,7 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
-    .Filter.ByExcluding(logEvent => logEvent.Exception is BadHttpRequestException));
+    .Filter.ByExcluding(logEvent =>
+        logEvent.Exception is BadHttpRequestException
+        || logEvent.Exception is OperationCanceledException));
 
 ConfigureServices(builder.Services, builder.Configuration);
 

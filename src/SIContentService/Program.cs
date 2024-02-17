@@ -11,6 +11,8 @@ using SIContentService.Metrics;
 using SIContentService.Middlewares;
 using SIContentService.Services;
 using SIContentService.Services.Background;
+using System.Net;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +22,7 @@ builder.Host.UseSerilog((ctx, lc) => lc
         logEvent.Exception is BadHttpRequestException
         || logEvent.Exception is OperationCanceledException));
 
-ConfigureServices(builder.Services, builder.Configuration);
+ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
@@ -30,7 +32,7 @@ Configure(app);
 
 app.Run();
 
-static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment hostEnvironment)
 {
     services.Configure<SIContentServiceOptions>(configuration.GetSection(SIContentServiceOptions.ConfigurationSectionName));
 
@@ -40,7 +42,16 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddSingleton<IPackageService, PackageService>();
     services.AddSingleton<IAvatarService, AvatarService>();
 
-    services.AddHttpClient<IResourceDownloader, ResourceDownloader>();
+    services.AddHttpClient<IResourceDownloader, ResourceDownloader>(client =>
+    {
+        var assemblyName = Assembly.GetExecutingAssembly().GetName();
+
+        client.DefaultRequestHeaders.UserAgent.Add(new System.Net.Http.Headers.ProductInfoHeaderValue(
+            hostEnvironment.ApplicationName,
+            assemblyName.Version?.ToString()));
+
+        client.DefaultRequestVersion = HttpVersion.Version20;
+    });
 
     services.AddHostedService<CleanerService>();
 

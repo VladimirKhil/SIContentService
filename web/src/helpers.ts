@@ -4,7 +4,7 @@ import * as Rusha from 'rusha';
  * @param data Input data.
  */
 export function encodeBase64(data: ArrayBuffer) : string {
-	if (typeof Buffer !== 'undefined') {	
+	if (typeof Buffer !== 'undefined') {
 		const buffer = Buffer.from(data);
 		return buffer.toString('base64');
 	}

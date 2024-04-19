@@ -1,8 +1,9 @@
 import FileKey from '../src/models/FileKey';
-import SIContentClient, { hashDataAsync } from '../src/SIContentClient';
+import SIContentClient, { SIContentServiceError, hashDataAsync } from '../src/SIContentClient';
 import SIContentClientOptions from '../src/SIContentClientOptions';
 import { randomBytes } from 'crypto';
 import { PACKAGE_DATA } from './packageData';
+import WellKnownSIContentServiceErrorCode from '../src/models/WellKnownSIContentServiceErrorCode';
 
 const options: SIContentClientOptions = {
 	//serviceUri: 'http://localhost:5165'
@@ -40,7 +41,7 @@ test('Upload avatar', async () => {
 test('Upload avatar if does not exist', async () => {
 	const randomValues = randomBytes(20);
 	const avatarName =`test_${Math.random()}.jpg`;
-	const avatarData = new Blob([randomValues]);	
+	const avatarData = new Blob([randomValues]);
 
 	const avatarUri = await siContentClient.uploadAvatarIfNotExistAsync(avatarName, avatarData);
 	expect(avatarUri).not.toBeNull();
@@ -87,4 +88,22 @@ test('Upload package if not exists', async () => {
 
 	const packageUri2 = await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {}, () => {}, () => {});
 	expect(packageUri2).toBe(packageUri);
+});
+
+test('Upload corrupted package', async () => {
+	const randomPackage = Buffer.from('AAAAA', 'base64');
+	const packageName = `test_${Math.random()}`;
+	const packageData = new Blob([randomPackage]);
+
+	let thrownError: SIContentServiceError | null = null;
+
+	try {
+		await siContentClient.uploadPackageIfNotExistAsync(packageName, packageData, () => {}, () => {}, () => {});
+	} catch (e) {
+		thrownError = e as SIContentServiceError;
+	}
+
+	expect(thrownError).not.toBeNull();
+	expect(thrownError?.statusCode).toBe(400);
+	expect(thrownError?.errorCode).toBe(WellKnownSIContentServiceErrorCode.BadPackageFile);
 });

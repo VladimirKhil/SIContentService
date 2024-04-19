@@ -1,8 +1,10 @@
 import SIContentClientOptions from './SIContentClientOptions';
 import FileKey from './models/FileKey';
 import { encodeBase64, escapeBase64, hashDataAsync } from './helpers';
+import SIContentServiceError from './models/SIContentServiceError';
+import WellKnownSIContentServiceErrorCode from './models/WellKnownSIContentServiceErrorCode';
 
-export { encodeBase64, hashDataAsync };
+export { encodeBase64, hashDataAsync, SIContentServiceError };
 
 /** Defines SIContent service client. */
 export default class SIContentClient {
@@ -54,7 +56,10 @@ export default class SIContentClient {
 			});
 
 			if (!response.ok) {
-				throw new Error(`${response.status} ${await response.text()}`);
+				const errorBody = await response.text();
+				const errorCode = tryGetErrorCode(errorBody);
+
+				throw new SIContentServiceError(errorBody, response.status, errorCode);
 			}
 
 			return await response.text();
@@ -72,7 +77,8 @@ export default class SIContentClient {
 			};
 
 			xhr.onerror = () => {
-				reject(new Error(xhr.statusText || xhr.responseText || xhr.status.toString()));
+				const errorCode = tryGetErrorCode(xhr.responseText);
+				reject(new SIContentServiceError(xhr.statusText || xhr.responseText, xhr.status, errorCode));
 			};
 
 			xhr.upload.onprogress = (e) => {
@@ -107,7 +113,10 @@ export default class SIContentClient {
 		});
 
 		if (!response.ok) {
-			throw new Error(`${response.status} ${await response.text()}`);
+			const errorBody = await response.text();response.json();
+			const errorCode = tryGetErrorCode(errorBody);
+
+			throw new SIContentServiceError(errorBody, response.status, errorCode);
 		}
 
 		return await response.text();
@@ -175,7 +184,7 @@ export default class SIContentClient {
 		const response = await fetch(`${this.options.serviceUri}/${requestUri}`);
 
 		if (!response.ok) {
-			throw new Error(`Error while retrieving ${requestUri}: ${response.status} ${await response.text()}`);
+			throw new SIContentServiceError(`Error while retrieving ${requestUri}: ${await response.text()}`, response.status);
 		}
 
 		return await response.blob();
@@ -189,9 +198,20 @@ export default class SIContentClient {
 				return null;
 			}
 
-			throw new Error(`Error while retrieving ${uri}: ${response.status} ${await response.text()}`);
+			throw new SIContentServiceError(`Error while retrieving ${uri}: ${await response.text()}`, response.status);
 		}
 
 		return await response.text();
 	}
+}
+
+function tryGetErrorCode(errorBody: string) {
+	let errorCode: WellKnownSIContentServiceErrorCode | undefined;
+
+	try {
+		const error = JSON.parse(errorBody) as SIContentServiceError;
+		errorCode = error?.errorCode;
+	} catch { /** Do nothing */ }
+
+	return errorCode;
 }

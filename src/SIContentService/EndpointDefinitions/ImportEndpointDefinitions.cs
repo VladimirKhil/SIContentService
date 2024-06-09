@@ -53,7 +53,7 @@ internal static class ImportEndpointDefinitions
                 if (!success)
                 {
                     var packageData = $"{escapedHash} {packageName}";
-                    context.Response.Headers.Add("Not-Created", Convert.ToBase64String(Encoding.UTF8.GetBytes(packageData)));
+                    context.Response.Headers.Append("Not-Created", Convert.ToBase64String(Encoding.UTF8.GetBytes(packageData)));
                 }
 
                 return Results.Text($"/packages/{Path.GetFileName(filePath)}");

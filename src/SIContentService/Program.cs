@@ -6,6 +6,7 @@ using OpenTelemetry.Resources;
 using Serilog;
 using SIContentService.Configuration;
 using SIContentService.Contracts;
+using SIContentService.EndpointDefinitions;
 using SIContentService.Helpers;
 using SIContentService.Metrics;
 using SIContentService.Middlewares;
@@ -35,8 +36,6 @@ app.Run();
 static void ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment hostEnvironment)
 {
     services.Configure<SIContentServiceOptions>(configuration.GetSection(SIContentServiceOptions.ConfigurationSectionName));
-
-    services.AddControllers();
 
     services.AddSingleton<IStorageService, StorageService>();
     services.AddSingleton<IPackageService, PackageService>();
@@ -72,8 +71,9 @@ static void Configure(WebApplication app)
         app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(contentPath) });
     }
 
-    app.UseRouting();
-    app.MapControllers();
+    ContentEndpointDefinitions.DefineContentEndpoint(app);
+    ConfigEndpointDefinitions.DefineContentEndpoint(app);
+    ImportEndpointDefinitions.DefineContentEndpoint(app);
 
     app.UseIpRateLimiting();
 

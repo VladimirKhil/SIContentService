@@ -103,7 +103,8 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
                 throw new Exception(errorMessage);
             }
 
-            return new Uri(await response.Content.ReadAsStringAsync(cancellationToken), UriKind.RelativeOrAbsolute);
+            var resourceUri = await response.Content.ReadAsStringAsync(cancellationToken);
+            return new Uri(resourceUri, UriKind.RelativeOrAbsolute);
         }
         catch (HttpRequestException exc)
         {
@@ -116,7 +117,7 @@ internal sealed class SIContentServiceClient : ISIContentServiceClient
                 throw new Exception(Resources.UploadFileTimeout, exc);
             }
 
-            throw exc;
+            throw;
         }
     }
 }

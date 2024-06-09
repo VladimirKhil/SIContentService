@@ -15,7 +15,7 @@ module.exports = () => {
 		devtool: 'source-map',
 		output: {
 			path: path.resolve(__dirname, 'dist'),
-			filename: '[name].js',
+			filename: 'SIContentClient.js',
 			library: 'SIContentClient',
 			libraryTarget: 'umd',
 			libraryExport: 'default',

@@ -1,6 +1,6 @@
 {
   "name": "sicontent-client",
-  "version": "1.0.10",
+  "version": "1.0.15",
   "description": "SIContent Service web client",
   "main": "dist/SIContentClient.js",
   "types": "dist/SIContentClient.d.ts",

@@ -5,7 +5,7 @@ namespace SIContentService.IntegrationTests;
 [TestFixture]
 public sealed class ImportTests : TestsBase
 {
-    private const string ExternalPackageUri = "https://vladimirkhil.com/sistorage/packages/98658de3-5992-43ed-9655-4ed3c02672a2.siq";
+    private const string ExternalPackageUri = "https://vladimirkhil.com/sistorage/packages/fa52f4ef-7233-4405-bd7f-dec4af8cd291.siq";
 
     [Test]
     [Ignore("Test should only be run manually with authorization secret provided")]

@@ -3,6 +3,7 @@ import FileKey from './models/FileKey';
 import { encodeBase64, escapeBase64, hashDataAsync } from './helpers';
 import SIContentServiceError from './models/SIContentServiceError';
 import WellKnownSIContentServiceErrorCode from './models/WellKnownSIContentServiceErrorCode';
+import InternalError from './models/InternalError';
 
 export { encodeBase64, hashDataAsync, SIContentServiceError };
 
@@ -72,7 +73,8 @@ export default class SIContentClient {
 				if (xhr.status >= 200 && xhr.status < 300) {
 					resolve(xhr.responseText);
 				} else {
-					reject(new Error(xhr.response));
+					const errorCode = tryGetErrorCode(xhr.responseText);
+					reject(new SIContentServiceError(xhr.statusText || xhr.responseText, xhr.status, errorCode));
 				}
 			};
 
@@ -113,7 +115,7 @@ export default class SIContentClient {
 		});
 
 		if (!response.ok) {
-			const errorBody = await response.text();response.json();
+			const errorBody = await response.text();
 			const errorCode = tryGetErrorCode(errorBody);
 
 			throw new SIContentServiceError(errorBody, response.status, errorCode);
@@ -209,7 +211,7 @@ function tryGetErrorCode(errorBody: string) {
 	let errorCode: WellKnownSIContentServiceErrorCode | undefined;
 
 	try {
-		const error = JSON.parse(errorBody) as SIContentServiceError;
+		const error = JSON.parse(errorBody) as InternalError;
 		errorCode = error?.errorCode;
 	} catch { /** Do nothing */ }
 

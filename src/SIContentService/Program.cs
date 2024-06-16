@@ -5,6 +5,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using Serilog;
 using SIContentService.Configuration;
+using SIContentService.Contract.Models;
 using SIContentService.Contracts;
 using SIContentService.EndpointDefinitions;
 using SIContentService.Helpers;
@@ -14,10 +15,13 @@ using SIContentService.Services;
 using SIContentService.Services.Background;
 using System.Net;
 using System.Reflection;
+using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console(new Serilog.Formatting.Display.MessageTemplateTextFormatter(
+        "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level}] {Message:lj} {Exception}{NewLine}"))
     .ReadFrom.Configuration(ctx.Configuration)
     .Filter.ByExcluding(logEvent =>
         logEvent.Exception is BadHttpRequestException
@@ -55,7 +59,12 @@ static void ConfigureServices(IServiceCollection services, IConfiguration config
     services.AddHostedService<CleanerService>();
 
     AddRateLimits(services, configuration);
-    AddMetrics(services);
+    AddMetrics(services, configuration);
+    
+    services.ConfigureHttpJsonOptions(options =>
+    {
+        options.SerializerOptions.TypeInfoResolverChain.Insert(0, SIContentSerializerContext.Default);
+    });
 }
 
 static void Configure(WebApplication app)
@@ -76,8 +85,6 @@ static void Configure(WebApplication app)
     ImportEndpointDefinitions.DefineContentEndpoint(app);
 
     app.UseIpRateLimiting();
-
-    app.UseOpenTelemetryPrometheusScrapingEndpoint();
 }
 
 static void AddRateLimits(IServiceCollection services, IConfiguration configuration)
@@ -89,18 +96,19 @@ static void AddRateLimits(IServiceCollection services, IConfiguration configurat
     services.AddInMemoryRateLimiting();
 }
 
-static void AddMetrics(IServiceCollection services)
+static void AddMetrics(IServiceCollection services, IConfiguration configuration)
 {
-    var meters = new OtelMetrics();
+    services.AddSingleton<OtelMetrics>();
 
     services.AddOpenTelemetry().WithMetrics(builder =>
         builder
             .ConfigureResource(rb => rb.AddService("SIContent"))
-            .AddMeter(meters.MeterName)
+            .AddMeter(OtelMetrics.MeterName)
             .AddAspNetCoreInstrumentation()
             .AddRuntimeInstrumentation()
             .AddProcessInstrumentation()
-            .AddPrometheusExporter());
-
-    services.AddSingleton(meters);
+            .AddOtlpExporter());
 }
+
+[JsonSerializable(typeof(ImportRequest))]
+internal partial class SIContentSerializerContext : JsonSerializerContext { }

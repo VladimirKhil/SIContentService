@@ -10,7 +10,7 @@ The project provides two service clients: one for .NET (available as NuGet packa
 There are reasons for using this service instead of regular CDN/S3 service:
 
 - it supports uploading and automatic extracting ZIP archives (SIGame packages) while using safe file names
-- context.xml package file required for Game server only (it contains questions and answers) is provided only for authorized users
+- content.xml package file required for Game server only (it contains questions and answers) is provided only for authorized users
 - it supports automatic clearing of unused content
 
 # Build

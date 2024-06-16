@@ -111,7 +111,7 @@ public sealed class PackageService : IPackageService
                             try
                             {
                                 var info = File.ReadAllText(infoFile);
-                                var contentInfo = JsonSerializer.Deserialize<ContentInfo>(info);
+                                var contentInfo = JsonSerializer.Deserialize(info, ContentInfoContext.Default.ContentInfo);
                                 lastUsageTime = contentInfo?.LastUsageTime ?? dir.CreationTime;
                             }
                             catch (Exception exc)
@@ -172,7 +172,7 @@ public sealed class PackageService : IPackageService
                     if (Directory.Exists(packagePath))
                     {
                         var infoFile = Path.Combine(packagePath, InfoFileName);
-                        File.WriteAllText(infoFile, JsonSerializer.Serialize(contentInfo));
+                        File.WriteAllText(infoFile, JsonSerializer.Serialize(contentInfo, ContentInfoContext.Default.ContentInfo));
                     }
                 }
                 catch (Exception exc)

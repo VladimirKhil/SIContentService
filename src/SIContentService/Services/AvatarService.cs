@@ -102,7 +102,7 @@ public sealed class AvatarService : IAvatarService
                             try
                             {
                                 var info = File.ReadAllText(infoFile);
-                                var contentInfo = JsonSerializer.Deserialize<ContentInfo>(info);
+                                var contentInfo = JsonSerializer.Deserialize(info, ContentInfoContext.Default.ContentInfo);
                                 lastUsageTime = contentInfo?.LastUsageTime ?? file.CreationTime;
                             }
                             catch (Exception exc)
@@ -172,7 +172,7 @@ public sealed class AvatarService : IAvatarService
                     }
 
                     var infoFile = Path.Combine(infoDir, Path.GetFileName(avatarPath) + ".json");
-                    File.WriteAllText(infoFile, JsonSerializer.Serialize(contentInfo));
+                    File.WriteAllText(infoFile, JsonSerializer.Serialize(contentInfo, ContentInfoContext.Default.ContentInfo));
                 }
                 catch (Exception exc)
                 {

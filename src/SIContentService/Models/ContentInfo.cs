@@ -1,4 +1,6 @@
-﻿namespace SIContentService.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace SIContentService.Models;
 
 /// <summary>
 /// Contains information about uploaded content.
@@ -10,3 +12,6 @@ public sealed class ContentInfo
     /// </summary>
     public DateTimeOffset LastUsageTime { get; set; }
 }
+
+[JsonSerializable(typeof(Dictionary<string, ContentInfo>))]
+internal partial class ContentInfoContext : JsonSerializerContext { }

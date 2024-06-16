@@ -35,6 +35,6 @@ internal sealed class AvatarsTests : TestsBase
         Assert.That(contentResponse.IsSuccessStatusCode, $"{contentResponse.StatusCode}: {await contentResponse.Content.ReadAsStringAsync()}");
 
         var data = await contentResponse.Content.ReadAsByteArrayAsync();
-        CollectionAssert.AreEqual(testBytes, data);
+        Assert.That(testBytes, Is.EqualTo(data));
     }
 }

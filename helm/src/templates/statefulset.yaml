@@ -30,14 +30,6 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
-        - name: log
-          {{- if .Values.logPath }}
-          hostPath:
-            path: '{{- toYaml .Values.logPath }}'
-            type: Directory
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
         - name: nginx-log
           {{- if .Values.nginxLogPath }}
           hostPath:
@@ -81,11 +73,13 @@ spec:
               value: '{{ .Values.options.serveStaticFiles }}'
             - name: Serilog__MinimumLevel
               value: '{{ .Values.options.logLevel }}'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: '{{ .Values.options.otel.uri }}'
+            - name: OTEL_METRIC_EXPORT_INTERVAL
+              value: '{{ .Values.options.otel.metric.exportInterval }}'
           volumeMounts:
           - name: shared-data
             mountPath: /opt
-          - name: log
-            mountPath: /app/logs
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: nginx

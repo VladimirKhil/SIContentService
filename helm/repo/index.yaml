@@ -2,8 +2,18 @@ apiVersion: v1
 entries:
   sicontent:
   - apiVersion: v2
+    appVersion: 1.2.0
+    created: "2024-06-27T21:58:27.5226944+02:00"
+    description: A service for uploading and retrieving SIGame content
+    digest: 966f72aa38f7e6c7f9833f6880596d37d1705a8fad551a9f9104be4fcd0263b5
+    name: sicontent
+    type: application
+    urls:
+    - sicontent-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
     appVersion: 1.1.4
-    created: "2023-11-25T23:24:10.1055914+01:00"
+    created: "2024-06-27T21:58:27.5216034+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 3f249f81ed7b918c32adc0c24f22b285d2c4fe578bd6fc94acb263ebbc89d677
     name: sicontent
@@ -13,7 +23,7 @@ entries:
     version: 1.1.4
   - apiVersion: v2
     appVersion: 1.1.3
-    created: "2023-11-25T23:24:10.1035181+01:00"
+    created: "2024-06-27T21:58:27.5139207+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 3108e5ee06215bdf1d10bb712cfa373f35968ae861e986307cc862daf90b332e
     name: sicontent
@@ -23,7 +33,7 @@ entries:
     version: 1.1.3
   - apiVersion: v2
     appVersion: 1.1.2
-    created: "2023-11-25T23:24:10.0959248+01:00"
+    created: "2024-06-27T21:58:27.5049092+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 69e69e3e634ce6742181992c0c4b91dbef1b87d5cdeaa773bd127fa26d8987fa
     name: sicontent
@@ -33,7 +43,7 @@ entries:
     version: 1.1.2
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2023-11-25T23:24:10.0863772+01:00"
+    created: "2024-06-27T21:58:27.4978934+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 7330ac0c0205ef30cb01017a0a89a061158bfb93101162a9a2d3e33ffa0abf67
     name: sicontent
@@ -43,7 +53,7 @@ entries:
     version: 1.1.1
   - apiVersion: v2
     appVersion: 1.1.0
-    created: "2023-11-25T23:24:10.0777419+01:00"
+    created: "2024-06-27T21:58:27.4868819+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 7b37011fbc9315ed9acd81066abd43024440da924ef57c35e1494262e894da1d
     name: sicontent
@@ -53,7 +63,7 @@ entries:
     version: 1.1.0
   - apiVersion: v2
     appVersion: 1.0.16
-    created: "2023-11-25T23:24:09.948415+01:00"
+    created: "2024-06-27T21:58:27.405478+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 960d4b84cafc1b5990a44f173b3afedc61acbe89c4a6171fddb4b035119da367
     name: sicontent
@@ -63,7 +73,7 @@ entries:
     version: 1.0.16
   - apiVersion: v2
     appVersion: 1.0.15
-    created: "2023-11-25T23:24:09.9383497+01:00"
+    created: "2024-06-27T21:58:27.3972294+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 4971cb9524344a6eccf100136a27075c136e14122f67ad001aa101e8fe31e08e
     name: sicontent
@@ -73,7 +83,7 @@ entries:
     version: 1.0.15
   - apiVersion: v2
     appVersion: 1.0.14
-    created: "2023-11-25T23:24:09.9289932+01:00"
+    created: "2024-06-27T21:58:27.3902556+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 3707194f788fb09fbb8cbca51af856c26f5ec6cb3e5dec105460437718591248
     name: sicontent
@@ -83,7 +93,7 @@ entries:
     version: 1.0.14
   - apiVersion: v2
     appVersion: 1.0.13
-    created: "2023-11-25T23:24:09.9164445+01:00"
+    created: "2024-06-27T21:58:27.3824384+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: ee445f6bed792d97f9b5c447979d5f9bf4ad2f7c66340c431766e0b0e182b1a0
     name: sicontent
@@ -93,7 +103,7 @@ entries:
     version: 1.0.13
   - apiVersion: v2
     appVersion: 1.0.12
-    created: "2023-11-25T23:24:09.904849+01:00"
+    created: "2024-06-27T21:58:27.3749465+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: bc66fe27ad66e4dd2627d4ef6fb57cacd15a1d0c7d36c5a80db8f15abcd659f0
     name: sicontent
@@ -103,7 +113,7 @@ entries:
     version: 1.0.12
   - apiVersion: v2
     appVersion: 1.0.11
-    created: "2023-11-25T23:24:09.8946391+01:00"
+    created: "2024-06-27T21:58:27.3668931+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 134cb643a113ad27d46ce1f6cc6294fc36101e6369eaac85cc04c54338ba004c
     name: sicontent
@@ -113,7 +123,7 @@ entries:
     version: 1.0.11
   - apiVersion: v2
     appVersion: 1.0.10
-    created: "2023-11-25T23:24:09.888074+01:00"
+    created: "2024-06-27T21:58:27.3580851+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 2034b59ef8ab4cf18167953a4930ebe5f496acefb4fb3148061faba63e7efb1d
     name: sicontent
@@ -123,7 +133,7 @@ entries:
     version: 1.0.10
   - apiVersion: v2
     appVersion: 1.0.9
-    created: "2023-11-25T23:24:10.0679989+01:00"
+    created: "2024-06-27T21:58:27.4799176+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: a373cdca80f0a59f4f25fd622f5af0beef9a526e4bf2fdc5cfe052b008801908
     name: sicontent
@@ -133,7 +143,7 @@ entries:
     version: 1.0.9
   - apiVersion: v2
     appVersion: 1.0.8
-    created: "2023-11-25T23:24:10.0567922+01:00"
+    created: "2024-06-27T21:58:27.4723355+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: ac528a9637b6c059512bb6165fe6e7a9509688069e32239929939abd9c679d89
     name: sicontent
@@ -143,7 +153,7 @@ entries:
     version: 1.0.8
   - apiVersion: v2
     appVersion: 1.0.7
-    created: "2023-11-25T23:24:10.036471+01:00"
+    created: "2024-06-27T21:58:27.4651131+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 1d9390547a1d1ac93493acb7b488a201af87bab941af3871b21f1e8ce9575289
     name: sicontent
@@ -153,7 +163,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: 1.0.6
-    created: "2023-11-25T23:24:10.0275026+01:00"
+    created: "2024-06-27T21:58:27.4543085+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 21b249db3dcff7ed386768c4df96e12dc379dcf4667897f24d132109e6b87788
     name: sicontent
@@ -163,7 +173,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.5
-    created: "2023-11-25T23:24:10.0154145+01:00"
+    created: "2024-06-27T21:58:27.4412579+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: bb3f2cc2282ac8869b3c4fe32448d2cb5c54d6edd4bcfb98087c0292629f7ffb
     name: sicontent
@@ -173,7 +183,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.4
-    created: "2023-11-25T23:24:10.0021724+01:00"
+    created: "2024-06-27T21:58:27.4298415+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 5a6835bc08fed70e7cd4b5ca6ecf8a1456c85bf01cb90ee7390a0e4bfa7c50ac
     name: sicontent
@@ -183,7 +193,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.3
-    created: "2023-11-25T23:24:09.9842159+01:00"
+    created: "2024-06-27T21:58:27.4226929+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: dc8410f01ffd8a6b9fe3dd3a9b4852f2e3103635d408894730620f8f0be216f3
     name: sicontent
@@ -193,7 +203,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-11-25T23:24:09.9619586+01:00"
+    created: "2024-06-27T21:58:27.4137767+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 88020e878c513a44f224626d07c8a208a0bc44c4ce9fe2a370d8c72554b8a1db
     name: sicontent
@@ -203,7 +213,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2023-11-25T23:24:09.8800722+01:00"
+    created: "2024-06-27T21:58:27.351084+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: 347fea6aa24500d9d773bb29365c1451a427d1c7aea31e5a5e274c7bf96be3a3
     name: sicontent
@@ -213,7 +223,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2023-11-25T23:24:09.8723896+01:00"
+    created: "2024-06-27T21:58:27.3440836+02:00"
     description: A service for uploading and retrieving SIGame content
     digest: a5cfb136e199b459d1a0404d329e3331ded50fda4473d86548984cd73add5f91
     name: sicontent
@@ -221,4 +231,4 @@ entries:
     urls:
     - sicontent-1.0.0.tgz
     version: 1.0.0
-generated: "2023-11-25T23:24:09.8568575+01:00"
+generated: "2024-06-27T21:58:27.3340833+02:00"

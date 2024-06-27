@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: vladimirkhil/sicontentservice
   pullPolicy: IfNotPresent
-  tag: 1.1.1
+  tag: 1.2.0
   nginxTag: "alpine"
 
 nginxPrometheusExporter:
@@ -22,9 +22,9 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 5000
-  targetPort: 5000
+  targetPort: 8080
   nginxPort: 80
-  nginxTargetPort: 8080
+  nginxTargetPort: 8088
 
 ingress:
   enabled: false
@@ -38,7 +38,6 @@ resources: {}
 nginxResources: {}
 
 volumePath: ''
-logPath: ''
 nginxLogPath: ''
 
 maxUploadSize: '101m'
@@ -54,3 +53,7 @@ options:
   cleaningInterval: '00:30:00'
   serveStaticFiles: false
   logLevel: Warning
+  otel:
+    uri: 'http://localhost:4317'
+    metric:
+      exportInterval: 60000

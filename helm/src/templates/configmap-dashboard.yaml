@@ -7,4 +7,4 @@ metadata:
     {{ .Values.dashboardLabels | toYaml | nindent 4 }}
   {{- end }}
 data:
-  sicontentDashboard.json: {{ .Files.Get "dashboards/sicontent-dashboard.json" | toJson }}
+  sicontentDashboard2.json: {{ .Files.Get "dashboards/sicontent-dashboard.json" | toJson }}

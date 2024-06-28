@@ -110,7 +110,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(packages_uploaded[1m])",
+          "expr": "rate(packages_uploaded_total[$__rate_interval])",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -202,7 +202,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(avatars_uploaded[1m])",
+          "expr": "rate(avatars_uploaded_total[$__rate_interval])",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -294,7 +294,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(packages_deleted[1m])",
+          "expr": "rate(packages_deleted_total[$__rate_interval])",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -386,7 +386,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(avatars_deleted[1m])",
+          "expr": "rate(avatars_deleted_total[$__rate_interval])",
           "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
@@ -408,7 +408,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "SIContent service",
+  "title": "SIContentService",
   "version": 0,
   "weekStart": ""
 }

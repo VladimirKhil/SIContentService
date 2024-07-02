@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
@@ -21,7 +22,7 @@ internal static class ContentEndpointDefinitions
 {
     private static readonly FormOptions DefaultFormOptions = new();
 
-    public static void DefineContentEndpoint(WebApplication app)
+    public static void DefineContentEndpoint(WebApplication app, SIContentServiceOptions options)
     {
         app.MapPost("/api/v1/content/packages", [DisableFormValueModelBinding] async (
             HttpContext context,
@@ -99,7 +100,7 @@ internal static class ContentEndpointDefinitions
             {
                 return Results.Accepted();
             }
-        });
+        }).WithMetadata(new RequestSizeLimitAttribute((options.MaxPackageSizeMb + 1) * 1024 * 1024));
 
         app.MapGet("/api/v1/content/packages/{packageHash}/{packageName}", async (
             string packageHash,
@@ -170,7 +171,7 @@ internal static class ContentEndpointDefinitions
             {
                 return Results.Accepted();
             }
-        });
+        }).WithMetadata(new RequestSizeLimitAttribute((options.MaxAvatarSizeMb + 1) * 1024 * 1024));
 
         app.MapGet("/api/v1/content/avatars/{avatarHash}/{avatarName}", async (
             string avatarHash,

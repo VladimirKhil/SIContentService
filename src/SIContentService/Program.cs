@@ -80,7 +80,7 @@ static void Configure(WebApplication app)
         app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(contentPath) });
     }
 
-    ContentEndpointDefinitions.DefineContentEndpoint(app);
+    ContentEndpointDefinitions.DefineContentEndpoint(app, options);
     ConfigEndpointDefinitions.DefineContentEndpoint(app);
     ImportEndpointDefinitions.DefineContentEndpoint(app);
 

@@ -110,5 +110,6 @@ static void AddMetrics(IServiceCollection services, IConfiguration configuration
             .AddOtlpExporter());
 }
 
+[JsonSerializable(typeof(SIContentServiceError))]
 [JsonSerializable(typeof(ImportRequest))]
 internal partial class SIContentSerializerContext : JsonSerializerContext { }

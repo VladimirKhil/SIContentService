@@ -19,5 +19,6 @@ public interface IStorageService
     /// Valides package file.
     /// </summary>
     /// <param name="filePath">Package file path.</param>
-    void ValidatePackageFile(string filePath);
+    /// <param name="hasQualityControl">Indicates if quality control is enabled.</param>
+    void ValidatePackageFile(string filePath, bool hasQualityControl);
 }

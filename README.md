@@ -42,10 +42,8 @@ There are reasons for using this service instead of regular CDN/S3 service:
 | `image.tag` | Image tag | `1.0.15` |
 | `image.nginxTag` | Image Nginx tag | `alpine` |
 | `volumePath` | Path for storing data | ` ` |
-| `logPath` | Path for storing logs | ` ` |
-| `nginxLogPath` | Path for storing Nginx logs | ` ` |
-| `maxUploadSize` | Maximum upload file size | `101m` |
 | `options.options.maxPackageSizeMb` | Maximum package size in megabytes | `100` |
+| `options.options.maxQualityPackageSizeMb` | Maximum size of package with quality control in megabytes | `150` |
 | `options.options.maxAvatarizeMb` | Maximum avatar size in megabytes | `1` |
 | `options.options.minDriveFreeSpaceMb` | Minimum drive free space for working normally (otherwise maximum allowed file size is cut by half) | `7000` |
 | `options.options.minDriveCriticalSpaceMb` | Minimum drive free space for working | `2000` |

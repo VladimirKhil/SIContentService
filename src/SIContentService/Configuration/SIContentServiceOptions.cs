@@ -18,6 +18,11 @@ public sealed class SIContentServiceOptions
     public int MaxPackageSizeMb { get; set; } = 100;
 
     /// <summary>
+    /// Maximum size of package with quality control in megabytes.
+    /// </summary>
+    public int MaxQualityPackageSizeMb { get; set; } = 150;
+
+    /// <summary>
     /// Maximum avatar size in megabytes.
     /// </summary>
     public int MaxAvatarSizeMb { get; set; } = 1;

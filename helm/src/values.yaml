@@ -38,13 +38,12 @@ resources: {}
 nginxResources: {}
 
 volumePath: ''
-nginxLogPath: ''
 
-maxUploadSize: '101m'
 bodyBufferSize: '10m'
 
 options:
   maxPackageSizeMb: 100
+  maxQualityPackageSizeMb: 150
   maxAvatarSizeMb: 1
   minDriveFreeSpaceMb: 7000
   minDriveCriticalSpaceMb: 2000

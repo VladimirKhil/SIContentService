@@ -36,13 +36,14 @@ internal sealed class StorageService : IStorageService
     public bool IsFreeSpaceCritical()
     {
         var freeSpace = new DriveInfo(_storageRoot).TotalFreeSpace;
-        return freeSpace < ((long)_options.MinDriveFreeSpaceMb + (long)_options.MinDriveCriticalSpaceMb) * 1024 * 1024;
+        return freeSpace < (_options.MinDriveFreeSpaceMb + (long)_options.MinDriveCriticalSpaceMb) * 1024 * 1024;
     }
 
-    public void ValidatePackageFile(string filePath)
+    public void ValidatePackageFile(string filePath, bool hasQualityControl)
     {
         var maxPackageSizeFactor = IsFreeSpaceCritical() ? 0.5 : 1;
-        var maxPackageSize = _options.MaxPackageSizeMb * 1024 * 1024 * maxPackageSizeFactor;
+        var maxPackageSizeOption = hasQualityControl ? _options.MaxQualityPackageSizeMb : _options.MaxPackageSizeMb;
+        var maxPackageSize = maxPackageSizeOption * 1024 * 1024 * maxPackageSizeFactor;
 
         var fileLength = new FileInfo(filePath).Length;
 

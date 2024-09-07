@@ -5,33 +5,24 @@ using SIContentService.Contracts;
 namespace SIContentService.Services;
 
 /// <inheritdoc />
-internal sealed class ResourceDownloader : IResourceDownloader
+internal sealed class ResourceDownloader(
+    HttpClient client,
+    IOptions<SIContentServiceOptions> options,
+    ILogger<ResourceDownloader> logger) : IResourceDownloader
 {
-    private readonly HttpClient _client;
-    private readonly SIContentServiceOptions _options;
-    private readonly ILogger<ResourceDownloader> _logger;
-
-    public ResourceDownloader(
-        HttpClient client,
-        IOptions<SIContentServiceOptions> options,
-        ILogger<ResourceDownloader> logger)
-    {
-        _client = client;
-        _options = options.Value;
-        _logger = logger;
-    }
+    private readonly SIContentServiceOptions _options = options.Value;
 
     public async Task DownloadResourceAsync(Uri resourceUri, string targetPath, CancellationToken cancellationToken)
     {
         try
         {
-            using var stream = await _client.GetStreamAsync(resourceUri, cancellationToken);
+            using var stream = await client.GetStreamAsync(resourceUri, cancellationToken);
             using var targetStream = File.Create(targetPath, _options.BufferSize, FileOptions.Asynchronous);
             await stream.CopyToAsync(targetStream, _options.BufferSize, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Resource {resourceUri} -> {targetPath} download error: {error}", resourceUri, targetPath, ex.Message);
+            logger.LogWarning(ex, "Resource {resourceUri} -> {targetPath} download error: {error}", resourceUri, targetPath, ex.Message);
             throw;
         }
     }

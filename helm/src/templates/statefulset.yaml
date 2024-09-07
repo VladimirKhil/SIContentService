@@ -30,14 +30,6 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
-        - name: nginx-log
-          {{- if .Values.nginxLogPath }}
-          hostPath:
-            path: '{{- toYaml .Values.nginxLogPath }}'
-            type: Directory
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
         - name: nginx-configmap
           configMap:
             name: {{ include "sicontent.fullname" . }}-nginx-configmap
@@ -57,6 +49,8 @@ spec:
               value: '/opt'
             - name: SIContentService__MaxPackageSizeMb
               value: '{{ .Values.options.maxPackageSizeMb }}'
+            - name: SIContentService__MaxQualityPackageSizeMb
+              value: '{{ .Values.options.maxQualityPackageSizeMb }}'
             - name: SIContentService__MaxAvatarSizeMb
               value: '{{ .Values.options.maxAvatarSizeMb }}'
             - name: SIContentService__MinDriveFreeSpaceMb
@@ -87,8 +81,6 @@ spec:
           volumeMounts:
           - name: shared-data
             mountPath: /usr/share/nginx/html
-          - name: nginx-log
-            mountPath: /var/log/nginx/
           - name: nginx-configmap
             mountPath: /etc/nginx/nginx.conf
             subPath: nginx.conf

@@ -81,8 +81,8 @@ static void Configure(WebApplication app)
     }
 
     ContentEndpointDefinitions.DefineContentEndpoint(app, options);
-    ConfigEndpointDefinitions.DefineContentEndpoint(app);
-    ImportEndpointDefinitions.DefineContentEndpoint(app);
+    ConfigEndpointDefinitions.DefineConfigEndpoint(app);
+    ImportEndpointDefinitions.DefineImportEndpoint(app);
 
     app.UseIpRateLimiting();
 }

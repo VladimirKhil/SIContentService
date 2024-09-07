@@ -9,34 +9,23 @@ using System.Text.Json;
 namespace SIContentService.Services;
 
 /// <inheritdoc cref="IAvatarService" />
-public sealed class AvatarService : IAvatarService
+public sealed class AvatarService(
+    IOptions<SIContentServiceOptions> options,
+    OtelMetrics metrics,
+    ILogger<AvatarService> logger) : IAvatarService
 {
     private const string InfoFolderName = ".info";
 
-    private readonly SIContentServiceOptions _options;
-    private readonly OtelMetrics _metrics;
-    private readonly ILogger<AvatarService> _logger;
-    private readonly string _rootFolder;
+    private readonly SIContentServiceOptions _options = options.Value;
+    private readonly string _rootFolder = Path.Combine(StringHelper.BuildRootedPath(options.Value.ContentFolder), "avatars");
 
     private readonly CollectionLocker _locker = new();
-
-    public AvatarService(
-        IOptions<SIContentServiceOptions> options,
-        OtelMetrics metrics,
-        ILogger<AvatarService> logger)
-    {
-        _options = options.Value;
-        _metrics = metrics;
-        _logger = logger;
-
-        _rootFolder = Path.Combine(StringHelper.BuildRootedPath(options.Value.ContentFolder), "avatars");
-    }
 
     public async Task<string> AddAvatarAsync(string avatarName, string avatarHashString, Func<Stream, Task> fileWriteAsync)
     {
         var avatarPath = BuildAvatarPath(avatarName, avatarHashString);
 
-        _logger.LogInformation("Adding avatar. Name: {name}, hash: {hash}, path: {path}", avatarName, avatarHashString, avatarPath);
+        logger.LogInformation("Adding avatar. Name: {name}, hash: {hash}, path: {path}", avatarName, avatarHashString, avatarPath);
 
         if (File.Exists(avatarPath))
         {
@@ -55,7 +44,7 @@ public sealed class AvatarService : IAvatarService
                 await fileWriteAsync(fs);
             });
 
-        _metrics.AddAvatar();
+        metrics.AddAvatar();
 
         return avatarPath;
     }
@@ -64,7 +53,7 @@ public sealed class AvatarService : IAvatarService
     {
         var avatarPath = BuildAvatarPath(avatarName, avatarHashString);
 
-        _logger.LogInformation("Getting avatar. Name: {name}, hash: {hash}, path: {path}", avatarName, avatarHashString, avatarPath);
+        logger.LogInformation("Getting avatar. Name: {name}, hash: {hash}, path: {path}", avatarName, avatarHashString, avatarPath);
 
         return UpdateAvatarUsageAsync(avatarPath, cancellationToken);
     }
@@ -107,7 +96,7 @@ public sealed class AvatarService : IAvatarService
                             }
                             catch (Exception exc)
                             {
-                                _logger.LogWarning(
+                                logger.LogWarning(
                                     exc,
                                     "Getting last usage time from file {fileName} resulted in error: {error}",
                                     infoFile,
@@ -135,11 +124,11 @@ public sealed class AvatarService : IAvatarService
                                 File.Delete(infoFile);
                             }
 
-                            _metrics.DeleteAvatar();
+                            metrics.DeleteAvatar();
                         }
                         catch (Exception exc)
                         {
-                            _logger.LogError(exc, "Error deleting file {fileName}: {error}", file.FullName, exc.Message);
+                            logger.LogError(exc, "Error deleting file {fileName}: {error}", file.FullName, exc.Message);
                         }
                     },
                     cancellationToken);
@@ -147,7 +136,7 @@ public sealed class AvatarService : IAvatarService
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc, "Clear old avatars error: {error}", exc.Message);
+            logger.LogError(exc, "Clear old avatars error: {error}", exc.Message);
         }
     }
 
@@ -176,7 +165,7 @@ public sealed class AvatarService : IAvatarService
                 }
                 catch (Exception exc)
                 {
-                    _logger.LogWarning(exc, "Avatar use date update error: {error}", exc.Message);
+                    logger.LogWarning(exc, "Avatar use date update error: {error}", exc.Message);
                 }
 
                 return avatarPath;

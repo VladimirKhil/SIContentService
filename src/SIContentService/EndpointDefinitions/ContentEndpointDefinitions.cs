@@ -27,8 +27,7 @@ internal static class ContentEndpointDefinitions
         app.MapPost("/api/v1/content/packages", [DisableFormValueModelBinding] async (
             HttpContext context,
             IPackageService packageService,
-            IStorageService storageService,
-            IOptions<SIContentServiceOptions> options) =>
+            IStorageService storageService) =>
         {
             var cancellationToken = context.RequestAborted; // Binding is disabled so don't inject cancellation token as method parameter
             var request = context.Request;
@@ -73,8 +72,7 @@ internal static class ContentEndpointDefinitions
                                 context,
                                 contentDisposition,
                                 packageService,
-                                storageService,
-                                options.Value,
+                                options,
                                 app.Logger,
                                 cancellationToken);
                         }
@@ -100,7 +98,7 @@ internal static class ContentEndpointDefinitions
             {
                 return Results.Accepted();
             }
-        }).WithMetadata(new RequestSizeLimitAttribute((options.MaxPackageSizeMb + 1) * 1024 * 1024));
+        }).WithMetadata(new RequestSizeLimitAttribute((options.MaxQualityPackageSizeMb + 1) * 1024 * 1024));
 
         app.MapGet("/api/v1/content/packages/{packageHash}/{packageName}", async (
             string packageHash,
@@ -193,7 +191,6 @@ internal static class ContentEndpointDefinitions
         HttpContext context,
         ContentDispositionHeaderValue contentDisposition,
         IPackageService packageService,
-        IStorageService storageService,
         SIContentServiceOptions options,
         ILogger logger,
         CancellationToken cancellationToken)
@@ -216,8 +213,6 @@ internal static class ContentEndpointDefinitions
                 await fileStream.CopyToAsync(targetStream, options.BufferSize, cancellationToken);
             }
 
-            storageService.ValidatePackageFile(targetFilePath);
-
             var (success, filePath) = await packageService.ImportUserPackageAsync(
                 targetFilePath,
                 packageName,
@@ -227,7 +222,7 @@ internal static class ContentEndpointDefinitions
             if (!success)
             {
                 var packageData = $"{escapedHash} {packageName}";
-                context.Response.Headers.Add("Not-Created", Convert.ToBase64String(Encoding.UTF8.GetBytes(packageData)));
+                context.Response.Headers.Append("Not-Created", Convert.ToBase64String(Encoding.UTF8.GetBytes(packageData)));
             }
 
             return filePath;

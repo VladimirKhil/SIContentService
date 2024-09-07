@@ -6,6 +6,7 @@ using SIContentService.Exceptions;
 using SIContentService.Helpers;
 using SIContentService.Metrics;
 using SIContentService.Models;
+using System.IO.Compression;
 using System.Net;
 using System.Text.Json;
 using ZipUtils;
@@ -16,22 +17,27 @@ namespace SIContentService.Services;
 public sealed class PackageService : IPackageService
 {
     private const string InfoFileName = "info.json";
-    internal const int UnZipMaxFactor = 2;
+    private const string QualityMarker = "quality.marker";
+    private const int UnZipMaxFactor = 2;
 
     private readonly CollectionLocker _locker = new();
 
+    private readonly IStorageService _storageService;
     private readonly SIContentServiceOptions _options;
     private readonly OtelMetrics _metrics;
     private readonly ILogger<PackageService> _logger;
     private readonly string _rootFolder;
 
     private readonly ExtractionOptions _extractionOptions;
+    private readonly ExtractionOptions _qualityExtractionOptions;
 
     public PackageService(
+        IStorageService storageService,
         IOptions<SIContentServiceOptions> options,
         OtelMetrics metrics,
         ILogger<PackageService> logger)
     {
+        _storageService = storageService;
         _options = options.Value;
         _metrics = metrics;
         _logger = logger;
@@ -40,7 +46,13 @@ public sealed class PackageService : IPackageService
 
         _extractionOptions = new ExtractionOptions(NamingModeSelector)
         {
-            MaxAllowedDataLength = (long)(_options.MaxPackageSizeMb) * 1024 * 1024 * UnZipMaxFactor,
+            MaxAllowedDataLength = (long)_options.MaxPackageSizeMb * 1024 * 1024 * UnZipMaxFactor,
+            FileFilter = FileFilter
+        };
+
+        _qualityExtractionOptions = new ExtractionOptions(NamingModeSelector)
+        {
+            MaxAllowedDataLength = (long)_options.MaxQualityPackageSizeMb * 1024 * 1024 * UnZipMaxFactor,
             FileFilter = FileFilter
         };
     }
@@ -51,6 +63,9 @@ public sealed class PackageService : IPackageService
         string packageHashString,
         CancellationToken cancellationToken = default)
     {
+        var hasQualityControl = DetectPackageHasQualityControl(filePath);
+        _storageService.ValidatePackageFile(filePath, hasQualityControl);
+        
         var extractedFilePath = BuildPackagePath(packageName, packageHashString);
 
         if (PackagePathExists(extractedFilePath))
@@ -61,7 +76,7 @@ public sealed class PackageService : IPackageService
 
         await _locker.DoAsync(
             extractedFilePath,
-            () => ExtractPackageAsync(filePath, extractedFilePath, cancellationToken),
+            () => ExtractPackageAsync(filePath, extractedFilePath, hasQualityControl, cancellationToken),
             cancellationToken);
 
         _metrics.AddPackage();
@@ -187,6 +202,7 @@ public sealed class PackageService : IPackageService
     private async Task ExtractPackageAsync(
         string filePath,
         string extractedFilePath,
+        bool hasQualityControl,
         CancellationToken cancellationToken = default)
     {
         try
@@ -194,10 +210,9 @@ public sealed class PackageService : IPackageService
             var extractedFiles = await ZipExtractor.ExtractArchiveFileToFolderAsync(
                 filePath,
                 extractedFilePath,
-                _extractionOptions,
+                hasQualityControl ? _qualityExtractionOptions : _extractionOptions,
                 cancellationToken);
 
-            File.WriteAllLines(Path.Combine(extractedFilePath, "files.txt"), extractedFiles.Values.Select(v => v.Name)); // legacy
             File.WriteAllLines(Path.Combine(extractedFilePath, "filesMap.txt"), extractedFiles.Select(f => $"{f.Key}:{f.Value.Name}:{f.Value.Size}"));
         }
         catch (InvalidDataException exc)
@@ -206,6 +221,11 @@ public sealed class PackageService : IPackageService
                 WellKnownSIContentServiceErrorCode.BadPackageFile,
                 HttpStatusCode.BadRequest,
                 exc);
+        }
+        catch (ServiceException exc) when (exc.ErrorCode == WellKnownSIContentServiceErrorCode.FileTooLarge)
+        {
+            DeleteFolder(extractedFilePath);
+            throw;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -221,6 +241,21 @@ public sealed class PackageService : IPackageService
                 WellKnownSIContentServiceErrorCode.BadPackageFile,
                 HttpStatusCode.BadRequest,
                 exc);
+        }
+    }
+
+    private bool DetectPackageHasQualityControl(string filePath)
+    {
+        try
+        {
+            using var stream = File.OpenRead(filePath);
+            using var archive = new ZipArchive(stream, ZipArchiveMode.Read);
+            return archive.Entries.Any(entry => entry.FullName == QualityMarker);
+        }
+        catch (Exception exc)
+        {
+            _logger.LogWarning(exc, "DetectHasQualityControl error: {error}", exc.Message);
+            return false;
         }
     }
 

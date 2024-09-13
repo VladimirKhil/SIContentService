@@ -277,13 +277,13 @@ public sealed class PackageService : IPackageService
 
     private static UnzipNamingMode NamingModeSelector(string name) => name switch
     {
-        "content.xml" or "Texts/authors.xml" or "Texts/sources.xml" => UnzipNamingMode.KeepOriginal,
+        "content.xml" or QualityMarker or "Texts/authors.xml" or "Texts/sources.xml" => UnzipNamingMode.KeepOriginal,
         _ => UnzipNamingMode.Hash // This guarantees that we never use user-provided file names
     };
 
     private static bool FileFilter(string filePath)
     {
-        if (filePath == "content.xml")
+        if (filePath == "content.xml" || filePath == QualityMarker)
         {
             return true;
         }

@@ -22,6 +22,10 @@ var builder = WebApplication.CreateSlimBuilder(args);
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console(new Serilog.Formatting.Display.MessageTemplateTextFormatter(
         "[{Timestamp:yyyy/MM/dd HH:mm:ss} {Level}] {Message:lj} {Exception}{NewLine}"))
+    .WriteTo.OpenTelemetry(options => options.ResourceAttributes = new Dictionary<string, object>
+    {
+        ["service.name"] = "SIContent"
+    })
     .ReadFrom.Configuration(ctx.Configuration)
     .Filter.ByExcluding(logEvent =>
         logEvent.Exception is BadHttpRequestException

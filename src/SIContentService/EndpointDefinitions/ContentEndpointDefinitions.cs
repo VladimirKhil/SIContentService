@@ -22,7 +22,7 @@ internal static class ContentEndpointDefinitions
 {
     private static readonly FormOptions DefaultFormOptions = new();
 
-    public static void DefineContentEndpoint(WebApplication app, SIContentServiceOptions options)
+    public static void DefineContentEndpoint(this WebApplication app, SIContentServiceOptions options)
     {
         app.MapPost("/api/v1/content/packages", [DisableFormValueModelBinding] async (
             HttpContext context,

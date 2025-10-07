@@ -5,7 +5,7 @@
 /// </summary>
 internal static class ConfigEndpointDefinitions
 {
-    public static void DefineConfigEndpoint(WebApplication app)
+    public static void DefineConfigEndpoint(this WebApplication app)
     {
         app.MapGet("/config", (IConfiguration configuration) =>
         {

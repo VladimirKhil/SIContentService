@@ -12,7 +12,7 @@ namespace SIContentService.EndpointDefinitions;
 /// </summary>
 internal static class ImportEndpointDefinitions
 {
-    public static void DefineImportEndpoint(WebApplication app)
+    public static void DefineImportEndpoint(this WebApplication app)
     {
         app.MapPut("api/v1/import/packages", async (
             HttpContext context,

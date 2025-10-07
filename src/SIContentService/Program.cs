@@ -84,9 +84,9 @@ static void Configure(WebApplication app)
         app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(contentPath) });
     }
 
-    ContentEndpointDefinitions.DefineContentEndpoint(app, options);
-    ConfigEndpointDefinitions.DefineConfigEndpoint(app);
-    ImportEndpointDefinitions.DefineImportEndpoint(app);
+    app.DefineContentEndpoint(options);
+    app.DefineConfigEndpoint();
+    app.DefineImportEndpoint();
 
     app.UseIpRateLimiting();
 }
